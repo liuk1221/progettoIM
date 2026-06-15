@@ -1,0 +1,204 @@
+Combinazione test
+=================
+Inizio: 2026-06-15T16:56:45
+Medico: ollama/qwen2.5:3b
+Esploratore: ollama/gemma3:4b
+Comando: C:\Users\liukq\AppData\Local\Programs\Python\Python312\python.exe main.py
+
+======================================================================
+Avvio intervento
+======================================================================
+
+[Sistema] Recupero sotto macerie - scenario
+
+[Sistema] .env caricato: C:\Users\liukq\Desktop\progettoIM\.env
+
+[Sistema] Modelli: esploratore=ollama/gemma3:4b, medico=ollama/qwen2.5:3b
+
+======================================================================
+Esplorazione guidata con PDDL
+======================================================================
+
+[Medico (ollama)] Guiderò l'esplorazione zona per zona usando PDDL. Partiamo dalla zona punto_accesso e poi procediamo verso corridoio_basso e infine stanza_est e stanza_nord.
+
+[Medico (ollama)] Dirigiti verso corridoio_basso. Esplorazione prioritaria del corridoio basso per potenziali individui in difficoltà.
+
+======================================================================
+Planning esploratore: corridoio_basso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_corridoio_basso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_3_0 l_3_1)
+02. (move-explorer esploratore l_3_1 l_3_2)
+
+[Esploratore (ollama)] Robot Esploratore a corridoio_basso, posizione (3, 2). Ho raggiunto l'area. Inviando report di localizzazione.
+
+[Esploratore -> Medico (ollama)] La polvere è molto densa, quasi palpabile. Si vede poco più in là.
+
+[Medico -> Esploratore] Qual è la profondità del corridoio basso?
+
+[Esploratore -> Medico (ollama)] Non ho dati sulla profondità del corridoio basso. Osservo solo che si trova alla posizione (3, 2) e che è coperto di polvere densa.
+
+[Medico -> Esploratore] Come si estende la polvere densa oltre il punto osservato?
+
+[Esploratore -> Medico (ollama)] La polvere densa è osservata nel corridoio basso e nella stanza est. Non ho dati su come si estende oltre il punto osservato.
+
+[Medico -> Esploratore] Ci sono altri segni di pericolo, come fumo o voci, che non abbiamo notato?
+
+[Esploratore -> Medico (ollama)] Non ho rilevato fumo o voci.
+
+[Medico (ollama)] Dirigiti verso punto_accesso. Prossima area strategica per raggiungere altri punti di interesse
+
+======================================================================
+Planning esploratore: punto_accesso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_punto_accesso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_3_2 l_3_1)
+02. (move-explorer esploratore l_3_1 l_3_0)
+
+[Esploratore (ollama)] Robot Medico, sono arrivato al punto_accesso, posizione (3, 0). Inviare report di raggiungimento.
+
+[Esploratore -> Medico (ollama)] Sono nel punto di accesso, posizione 3, 0. Vedo un punto medico avanzato e l'accesso esterno è aperto.
+
+[Medico -> Esploratore] È possibile identificare il punto medico avanzato?
+
+[Esploratore -> Medico (ollama)] L'area con il punto medico avanzato è l'area=punto_accesso posizione=(3, 0).
+
+[Medico -> Esploratore] L'accesso esterno è aperto per quanto riguarda la sicurezza e non ci sono ostacoli apparenti?
+
+[Esploratore -> Medico (ollama)] L'accesso esterno è libero.
+
+[Medico -> Esploratore] Ci sono altri segni di attività umana o segnali di soccorso vicino al punto di accesso?
+
+[Esploratore -> Medico (ollama)] L'area di accesso esterno libero è presente all'area del punto medico avanzato.
+
+[Medico (ollama)] Dirigiti verso stanza_nord. Prossima area in direzione nord, per evitare corridoio_basso con polvere densa.
+
+======================================================================
+Planning esploratore: stanza_nord
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_nord.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 6
+
+Piano esploratore:
+01. (move-explorer esploratore l_3_0 l_2_0)
+02. (move-explorer esploratore l_2_0 l_1_0)
+03. (move-explorer esploratore l_1_0 l_0_0)
+04. (move-explorer esploratore l_0_0 l_0_1)
+05. (move-explorer esploratore l_0_1 l_0_2)
+06. (move-explorer esploratore l_0_2 l_0_3)
+
+[Esploratore (ollama)] Robot Medico, sono arrivato nell'area stanza_nord, posizione (0, 3). Inviare report di localizzazione.
+
+[Esploratore -> Medico (ollama)] L'aria è densa e umida. Lo spazio è molto stretto, quasi soffocante. L'area è in uno stato di abbandono, con detriti sparsi ovunque. Non sembra esserci alcun movimento delle macerie, tutto è fermo.
+
+[Medico -> Esploratore] Sono presenti detriti o macerie mobili che potrebbero colpire qualcuno?
+
+[Esploratore -> Medico (ollama)] La polvere densa è presente nel corridoio basso e nella stanza est.
+
+[Medico -> Esploratore] Ci sono segni di movimento delle macerie? Se sì, quali sono i punti specifici?
+
+[Esploratore -> Medico (ollama)] Non sono in grado di determinare se ci sono segni di movimento delle macerie. Le osservazioni indicano solo polvere densa nelle aree del corridoio basso, della stanza est e della stanza nord.
+
+[Medico -> Esploratore] È possibile raggiungere la stanza sud senza rischiare di essere bloccato da detriti?
+
+[Esploratore -> Medico (ollama)] Non posso determinare se è possibile raggiungere la stanza sud senza il rischio di essere bloccato dai detriti. Non ho informazioni sulla stanza sud o sulla sua posizione relativa rispetto alle altre aree.
+
+[Medico (ollama)] Dirigiti verso stanza_est. La stanza est è l'area più vicina e disponibile tra le aree non ancora esplorate.
+
+======================================================================
+Planning esploratore: stanza_est
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_est.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_0_3 l_1_3)
+02. (move-explorer esploratore l_1_3 l_2_3)
+
+[Esploratore (ollama)] Robot Medico, sono arrivato nell'area stanza_est alla posizione (2, 3). Inviare report di localizzazione.
+
+[Esploratore -> Medico (ollama)] La stanza è piena di polvere molto densa e l'accesso è piuttosto stretto. L'area sembra non essere stata messa in sicurezza. Il paziente, paziente_a, si trova qui.
+
+[Medico -> Esploratore] È stato già verificato se c'è un altro accesso più ampio alla stanza?
+
+[Esploratore -> Medico (ollama)] L'osservazione indica un accesso stretto alla stanza nord. Non è verificato se ci sia un altro accesso più ampio.
+
+[Medico -> Esploratore] Quali sono i segni distintivi dell'area non stata messa in sicurezza?
+
+[Esploratore -> Medico (ollama)] L'area non messa in sicurezza è la stanza est, posizione (2,3).  È caratterizzata da accesso stretto e polvere densa. Il paziente a (paziente_a) presenta respiro debole, sanguinamento moderato e stato di coscienza.
+
+[Medico -> Esploratore] Ci sono altri pazienti o individui presenti nella stanza?
+
+[Esploratore -> Medico (ollama)] Non sono in grado di rispondere alla domanda. Non ho osservato altri individui nella stanza.
+
+[Esploratore -> Medico (ollama)] Robot Medico, tutte le aree designate sono state esaminate. Report completati: 4. Attendo istruzioni successive.
+
+[Medico (ollama)] Ho ricevuto i chiarimenti. Ora utilizzerò i report e le risposte per prendere la decisione finale.
+
+======================================================================
+Decisione medica
+======================================================================
+
+[Medico (ollama)] Paziente prioritario: paziente_a. O paciente a está em uma situação crítica com resfriamento fraco, sangramento moderado e confuso. Ele está na sala não ainda colocada em segurança com acesso estreito e poeira densa. É o paciente mais urgente.
+
+Priorita':
+  1. paziente_a - Paziente a ha segni di respiro debole, sanguinamento moderato e stato confuso. È in una stanza non ancora messa in sicurezza con accesso stretto e polvere densa.
+  2. paziente_c - Paziente c ha segni di respiro debole, sanguinamento moderato e è cosciente. È in un corridoio basso con polvere densa.
+  3. paziente_b - Paziente b ha segni di dolore toracico, polso debole e stato confuso. Está em uma sala não ainda colocada em segurança com espaço estreito.
+
+======================================================================
+Aggiornamento PDDL
+======================================================================
+
+[Sistema] Aggiorno il problema PDDL con varchi, macerie e sicurezza dell'area.
+
+[Sistema] Problema aggiornato: C:\Users\liukq\Desktop\progettoIM\output\problem_rescue_generated.pddl
+
+======================================================================
+Planning con Fast Downward
+======================================================================
+
+[Sistema] Fast Downward: C:\Users\liukq\Desktop\progettoIM\fast-downward-24.06.1\fast-downward.py
+
+[Sistema] Invio dominio e problema al planner.
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo stimato: 10
+
+Piano generato:
+01. (move-civilian soccorritore_civile l_3_0 l_2_0)
+02. (move-civilian soccorritore_civile l_2_0 l_2_1)
+03. (move-civilian soccorritore_civile l_2_1 l_2_2)
+04. (move-civilian soccorritore_civile l_2_2 l_2_3)
+05. (secure-area soccorritore_civile l_2_3)
+06. (move-medic medico l_3_0 l_2_0)
+07. (move-medic medico l_2_0 l_2_1)
+08. (move-medic medico l_2_1 l_2_2)
+09. (move-medic medico l_2_2 l_2_3)
+
+=================
+Fine: 2026-06-15T16:58:49
+Exit code: 0

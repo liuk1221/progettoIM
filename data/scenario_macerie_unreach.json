@@ -1,0 +1,66 @@
+{
+  "name": "Recupero sotto macerie - scenario con stanza irraggiungibile",
+  "rows": 4,
+  "cols": 4,
+  "medic_start": [3, 0],
+  "explorer_start": [3, 0],
+  "civilian_start": [3, 0],
+  "blocked_cells": [[1, 1], [0, 2], [1, 3]],
+  "rubble_gates": [],
+  "unsafe_cells": [[2, 3], [0, 3]],
+  "triage_rules": {
+    "signs": {
+      "respiro debole": 45,
+      "sanguinamento moderato": 30,
+      "cosciente": -10,
+      "dolore toracico": 35,
+      "polso debole": 25,
+      "confuso": 15,
+      "risponde a voce": -15,
+      "respiro regolare": -5
+    },
+    "observations": {
+      "area non messa in sicurezza": 20,
+      "polvere densa": 8,
+      "accesso stretto": 5,
+      "spazio ristretto": 8,
+      "nessun cedimento attivo": -10,
+      "punto medico avanzato": 0,
+      "accesso esterno libero": 0
+    }
+  },
+  "areas": [
+    {
+      "id": "punto_accesso",
+      "location": [3, 0],
+      "observations": ["punto medico avanzato", "accesso esterno libero"]
+    },
+    {
+      "id": "corridoio_basso",
+      "location": [3, 2],
+      "observations": ["polvere densa"],
+      "patient": {
+        "id": "paziente_c",
+        "signs": ["respiro debole", "sanguinamento moderato", "cosciente"]
+      }
+    },
+    {
+      "id": "stanza_est",
+      "location": [2, 3],
+      "observations": ["polvere densa", "accesso stretto", "area non messa in sicurezza"],
+      "patient": {
+        "id": "paziente_a",
+        "signs": ["dolore toracico", "polso debole", "confuso"]
+      }
+    },
+    {
+      "id": "stanza_nord",
+      "location": [0, 3],
+      "observations": ["spazio ristretto", "area non messa in sicurezza", "nessun cedimento attivo"],
+      "patient": {
+        "id": "paziente_b",
+        "signs": ["respiro debole", "sanguinamento moderato", "cosciente"]
+      }
+    }
+  ]
+}

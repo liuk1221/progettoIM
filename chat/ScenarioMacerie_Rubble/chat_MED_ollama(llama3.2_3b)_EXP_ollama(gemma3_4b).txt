@@ -1,0 +1,213 @@
+Combinazione test
+=================
+Inizio: 2026-06-15T22:56:01
+Medico: ollama/llama3.2:3b
+Esploratore: ollama/gemma3:4b
+Comando: C:\Users\liukq\AppData\Local\Programs\Python\Python312\python.exe main.py
+
+======================================================================
+Avvio intervento
+======================================================================
+
+[Sistema] Recupero sotto macerie - scenario con macerie
+
+[Sistema] .env caricato: C:\Users\liukq\Desktop\progettoIM\.env
+
+[Sistema] Modelli: esploratore=ollama/gemma3:4b, medico=ollama/llama3.2:3b
+
+======================================================================
+Esplorazione guidata con PDDL
+======================================================================
+
+[Medico (ollama)] "Esploratore, iniziando la nostra simulazione di recupero sotto macerie. Guiderò l'esplorazione zona per zona utilizzando il linguaggio PDDL. Iniziamo dalla posizione iniziale (4, 0). La prima area da esplorare è il punto_accesso. Sono pronto a guidarti?"
+
+[Medico (ollama)] Dirigiti verso corridoio_sud. Area adiacente alla posizione attuale, facile da raggiungere e con potenziale interesse per la ricerca di segni di vita.
+
+======================================================================
+Planning esploratore: corridoio_sud
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_corridoio_sud.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 7
+
+Piano esploratore:
+01. (remove-rubble-explorer esploratore l_4_0 l_4_1)
+02. (move-explorer esploratore l_4_0 l_4_1)
+03. (move-explorer esploratore l_4_1 l_4_2)
+04. (move-explorer esploratore l_4_2 l_4_3)
+
+[Esploratore (ollama)] Robot Esploratore Unit 7. Ho raggiunto l’area corridoio_sud, posizione (4, 3). Inviando report di localizzazione.
+
+[Esploratore -> Medico (ollama)] L'aria è densa di polvere. Il corridoio è molto stretto, mi costringe a muovermi con cautela. L'area sembra non essere stata messa in sicurezza.
+
+[Medico -> Esploratore] È sicuro che l'area non sia stata messa in sicurezza?
+
+[Esploratore -> Medico (ollama)] L'area del corridoio sud, della stanza est e della stanza nord sono state indicate come "area non messa in sicurezza".
+
+[Medico -> Esploratore] Qual è la causa della polvere densa nel corridoio?
+
+[Esploratore -> Medico (ollama)] La polvere densa si trova nel corridoio sud e nella stanza nord.
+
+[Medico -> Esploratore] Come si verifica il sanguinamento moderato?
+
+[Esploratore -> Medico (ollama)] Il sanguinamento moderato si verifica nell'area corridoio_sud, dove il paziente A presenta un sanguinamento moderato.
+
+[Medico (ollama)] Dirigiti verso punto_accesso. Area di accesso necessaria per ulteriori esplorazioni
+
+======================================================================
+Planning esploratore: punto_accesso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_punto_accesso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 7
+
+Piano esploratore:
+01. (move-explorer esploratore l_4_3 l_4_2)
+02. (move-explorer esploratore l_4_2 l_4_1)
+03. (remove-rubble-explorer esploratore l_4_1 l_4_0)
+04. (move-explorer esploratore l_4_1 l_4_0)
+
+[Esploratore (ollama)] Robot Medico, sono arrivato al punto_accesso, posizione (4, 0). Inviare report di raggiungimento.
+
+[Esploratore -> Medico (ollama)] Sono nel punto di accesso, posizione 4, 0. Vedo un punto medico avanzato e l'accesso esterno è aperto.
+
+[Medico -> Esploratore] Qual è lo stato dell'accesso esterno in caso di emergenza?
+
+[Esploratore -> Medico (ollama)] L'accesso esterno è libero all'area del punto medico avanzato. L'accesso al corridoio sud è stretto e l'area non è messa in sicurezza. La stanza est presenta un varco ostruito vicino.
+
+[Medico -> Esploratore] Cosa significa 'punto medico avanzato' in questo contesto?
+
+[Esploratore -> Medico (ollama)] "L'osservazione indica che 'punto medico avanzato' si riferisce all'area di accesso (4,0), che è stata identificata come un punto con la dicitura 'punto medico avanzato' e ha accesso esterno libero."
+
+[Medico -> Esploratore] Esiste un sistema di allarme o segnalazione per le emergenze?
+
+[Esploratore -> Medico (ollama)] Non ho dati relativi alla presenza di un sistema di allarme o segnalazione per le emergenze.
+
+[Medico (ollama)] Dirigiti verso stanza_nord. Area più vicina e meno pericolosa
+
+======================================================================
+Planning esploratore: stanza_nord
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_nord.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 19
+
+Piano esploratore:
+01. (remove-rubble-explorer esploratore l_4_0 l_4_1)
+02. (move-explorer esploratore l_4_0 l_4_1)
+03. (move-explorer esploratore l_4_1 l_4_2)
+04. (remove-rubble-explorer esploratore l_4_2 l_3_2)
+05. (move-explorer esploratore l_4_2 l_3_2)
+06. (move-explorer esploratore l_3_2 l_2_2)
+07. (move-explorer esploratore l_2_2 l_1_2)
+08. (move-explorer esploratore l_1_2 l_0_2)
+09. (remove-rubble-explorer esploratore l_0_2 l_0_3)
+10. (move-explorer esploratore l_0_2 l_0_3)
+
+[Esploratore (ollama)] Robot Medico, sono arrivato nell'area stanza_nord, posizione (0, 3). Inviare report di localizzazione.
+
+[Esploratore -> Medico (ollama)] La stanza è piena di polvere, molto densa. Vedo che una delle pareti sembra instabile, c'è un certo cedimento. L'area generale appare non messa in sicurezza. Il paziente, paziente_c, ha un respiro debole e mostra del sanguinamento lieve, oltre ad essere pallido e risponde quando gli si parla.
+
+[Medico -> Esploratore] C'è un pericolo immediato nella stanza?
+
+[Esploratore -> Medico (ollama)] Sì, c'è un pericolo immediato. Sono presenti sanguinamenti moderati e lievi, respiro debole e pazienti confusi/doloranti in diverse aree non messe in sicurezza. L'instabilità di una parete nella stanza nord rappresenta inoltre un potenziale pericolo.
+
+[Medico -> Esploratore] La parete instabile è stabile attualmente?
+
+[Esploratore -> Medico (ollama)] La parete nella stanza nord presenta instabilità.
+
+[Medico -> Esploratore] Il paziente_c ha segni di trauma o lesione?
+
+[Esploratore -> Medico (ollama)] Sì, il paziente_a presenta sanguinamento moderato e respiro debole. Il paziente_b presenta dolore toracico e polso debole. Il paziente_c presenta respiro debole, sanguinamento lieve, pallore e risponde a voce.
+
+[Medico (ollama)] Dirigiti verso stanza_est. area non ancora esplorata e vicina alla posizione attuale
+
+======================================================================
+Planning esploratore: stanza_est
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_est.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 7
+
+Piano esploratore:
+01. (remove-rubble-explorer esploratore l_0_3 l_1_3)
+02. (move-explorer esploratore l_0_3 l_1_3)
+03. (move-explorer esploratore l_1_3 l_2_3)
+04. (move-explorer esploratore l_2_3 l_2_4)
+
+[Esploratore (ollama)] Robot Medico, sono arrivato nell'area stanza_est alla posizione (2, 4). Inviare report di localizzazione.
+
+[Esploratore -> Medico (ollama)] L'aria è densa e umida. Lo spazio è molto stretto, quasi soffocante. L'area sembra abbandonata e non messa in sicurezza. C’è un varco ostruito da qualche parte vicino, probabilmente da detriti. Non vedo segni di crollo imminente, ma l'ambiente è instabile.
+
+[Medico -> Esploratore] C'è un varco ostruito vicino alla stanza est?
+
+[Esploratore -> Medico (ollama)] Sì, c'è un varco ostruito vicino alla stanza est.
+
+[Medico -> Esploratore] L'area è stata abbandonata per un lungo periodo di tempo?
+
+[Esploratore -> Medico (ollama)] Non è possibile determinare se l'area è stata abbandonata per un lungo periodo di tempo dai dati osservati. L'osservazione indica solo che l'accesso esterno è libero e presente un punto medico avanzato.
+
+[Medico -> Esploratore] Ci sono segni di crollo imminente o instabilità nella struttura?
+
+[Esploratore -> Medico (ollama)] L'osservazione indica un'instabilità di una parete nella stanza nord.
+
+[Esploratore -> Medico (ollama)] Robot Medico, tutte le aree designate sono state esaminate. Nessun report mancante. Attendo istruzioni successive.
+
+[Medico (ollama)] "Robot esploratore, ho ricevuto i chiarimenti necessari. Da ora in poi utilizzerò i report e le risposte per prendere la mia decisione finale."
+
+======================================================================
+Decisione medica
+======================================================================
+
+[Medico (ollama)] Paziente prioritario: paziente_a. La priorita' resta a paziente_a perche' la tabella di triage lo colloca al primo posto: sanguinamento moderato e respiro debole.
+
+Priorita':
+  1. paziente_a - sanguinamento moderato e respiro debole
+  2. paziente_c - respiro debole e sanguinamento lieve
+  3. paziente_b - dolor toracico e polso debole
+
+======================================================================
+Aggiornamento PDDL
+======================================================================
+
+[Sistema] Aggiorno il problema PDDL con varchi, macerie e sicurezza dell'area.
+
+[Sistema] Problema aggiornato: C:\Users\liukq\Desktop\progettoIM\output\problem_rescue_generated.pddl
+
+======================================================================
+Planning con Fast Downward
+======================================================================
+
+[Sistema] Fast Downward: C:\Users\liukq\Desktop\progettoIM\fast-downward-24.06.1\fast-downward.py
+
+[Sistema] Invio dominio e problema al planner.
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo stimato: 12
+
+Piano generato:
+01. (remove-rubble-civilian soccorritore_civile l_4_0 l_4_1)
+02. (move-civilian soccorritore_civile l_4_0 l_4_1)
+03. (move-civilian soccorritore_civile l_4_1 l_4_2)
+04. (move-civilian soccorritore_civile l_4_2 l_4_3)
+05. (secure-area soccorritore_civile l_4_3)
+06. (move-medic medico l_4_0 l_4_1)
+07. (move-medic medico l_4_1 l_4_2)
+08. (move-medic medico l_4_2 l_4_3)
+
+=================
+Fine: 2026-06-15T22:57:58
+Exit code: 0

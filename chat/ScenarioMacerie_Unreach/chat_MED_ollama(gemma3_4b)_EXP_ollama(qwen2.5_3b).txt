@@ -1,0 +1,155 @@
+Combinazione test
+=================
+Inizio: 2026-06-15T19:01:30
+Medico: ollama/gemma3:4b
+Esploratore: ollama/qwen2.5:3b
+Comando: C:\Users\liukq\AppData\Local\Programs\Python\Python312\python.exe main.py
+
+======================================================================
+Avvio intervento
+======================================================================
+
+[Sistema] Recupero sotto macerie - scenario con stanza irraggiungibile
+
+[Sistema] .env caricato: C:\Users\liukq\Desktop\progettoIM\.env
+
+[Sistema] Modelli: esploratore=ollama/qwen2.5:3b, medico=ollama/gemma3:4b
+
+======================================================================
+Esplorazione guidata con PDDL
+======================================================================
+
+[Medico (ollama)] Esploratore, inizieremo l'analisi della zona a zone. Utilizzerò PDDL per la pianificazione del percorso. Inizia con il punto_accesso.
+
+[Medico (ollama)] Dirigiti verso corridoio_basso. L'area corrente è il punto di accesso. L'esploratore dovrebbe muoversi verso un'area non ancora esplorata per raccogliere più informazioni.
+
+======================================================================
+Planning esploratore: corridoio_basso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_corridoio_basso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_3_0 l_3_1)
+02. (move-explorer esploratore l_3_1 l_3_2)
+
+[Esploratore (ollama)] Ho raggiunto l'area indicata. Invio report.
+
+[Esploratore -> Medico (ollama)] Corridoio basso, posizione (3, 2): l'unico elemento noto è una quantità significativa di polvere densa. Non si vede altro nell'area.
+
+[Medico (ollama)] Robot esploratore, report ricevuto. Autorizzo spostamento verso corridoio_basso, posizione (3, 2). Conferma ricezione.
+
+[Medico (ollama)] Dirigiti verso stanza_est. Il report del corridoio basso indica solo polvere densa. La stanza est è l'unica area non ancora esplorata e potrebbe contenere informazioni più utili o un percorso migliore.
+
+======================================================================
+Planning esploratore: stanza_est
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_est.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_3_2 l_2_2)
+02. (move-explorer esploratore l_2_2 l_2_3)
+
+[Esploratore (ollama)] Ho raggiunto l'area designata, stanza est. Invio relazione.
+
+[Esploratore -> Medico (ollama)] In questa stanza est, l'osservazione più evidente è la presenza di una quantità significativa di polvere densa. L'accesso alla stanza è limitato a causa dell'accumulo di detriti e frammenti rotti. Nonostante questi problemi, non c'è traccia di un'operazione per assicurare la sicurezza della zona.
+
+Paziente paziente_a si trova in questa stanza: ha una sensazione di dolore al petto, il polso è debole e sembra confuso.
+
+[Medico (ollama)] Robot esploratore, ricevuto report stanza est. Paziente a presente sintomi negativi. Autorizzo spostamento verso la stanza est per valutazione.
+
+[Medico (ollama)] Dirigiti verso stanza_nord. La stanza est e il corridoio basso sono entrambi caratterizzati da polvere densa e detriti, rendendo difficile l'esplorazione. La stanza nord è l'unica area non ancora esplorata, quindi è la scelta più logica per iniziare a cercare.
+
+======================================================================
+Planning esploratore: stanza_nord
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_nord.pddl
+
+[Esploratore -> Medico (ollama)] Non riesco a raggiungere la zona indicata stanza_nord.
+
+[Medico (ollama)] La stanza nord è irraggiungibile e l'unico punto di accesso raggiungibile è il punto_accesso.
+
+[Medico (ollama)] Dirigiti verso punto_accesso. La stanza nord è irraggiungibile e l'unico punto di accesso raggiungibile è il punto_accesso.
+
+======================================================================
+Planning esploratore: punto_accesso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_punto_accesso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 4
+
+Piano esploratore:
+01. (move-explorer esploratore l_2_3 l_2_2)
+02. (move-explorer esploratore l_2_2 l_2_1)
+03. (move-explorer esploratore l_2_1 l_2_0)
+04. (move-explorer esploratore l_2_0 l_3_0)
+
+[Esploratore (ollama)] Ho raggiunto l'area di punto_accesso. Invio relazione.
+
+[Esploratore -> Medico (ollama)] Nell'area di Punto Accesso, vedo un segnale luminoso che indica l'esistenza del Punto Medico Avanzato. L'accesso esterno è aperto e libera. Non ho notato nessun altro oggetto o dispositivo in questa zona. Non c'è alcun paziente visibile nella stanza.
+
+[Medico (ollama)] Robot Esploratore, ricevuto report Punto Accesso. Conferma accesso al Punto Medico Avanzato. Autorizzo spostamento verso il Punto Medico.
+
+[Esploratore -> Medico (ollama)] Ho esplorato le macerie, ma alcune stanze al Nord rimangono inaccessibili. Ho inviato i miei report disponibili.
+
+[Medico (ollama)] Robot esploratore, invia immediatamente tutti i report disponibili. Userò le informazioni per prendere la decisione finale.
+
+======================================================================
+Decisione medica
+======================================================================
+
+[Medico (ollama fallback)] Paziente prioritario: paziente_a. Fallback locale: sceglie il paziente con lo score piu' alto dopo aver integrato le risposte di chiarimento disponibili.
+
+[Sistema] Fallback ollama (gemma3:4b): Risposta non JSON valida: Invalid \escape: line 4 column 71 (char 133)
+
+Priorita':
+  1. paziente_a - Score 108 calcolato da segni, ambiente e chiarimenti ricevuti.
+  2. paziente_c - Score 73 calcolato da segni, ambiente e chiarimenti ricevuti.
+
+======================================================================
+Aggiornamento PDDL
+======================================================================
+
+[Sistema] Aggiorno il problema PDDL con varchi, macerie e sicurezza dell'area.
+
+[Sistema] Problema aggiornato: C:\Users\liukq\Desktop\progettoIM\output\problem_rescue_generated.pddl
+
+======================================================================
+Planning con Fast Downward
+======================================================================
+
+[Sistema] Fast Downward: C:\Users\liukq\Desktop\progettoIM\fast-downward-24.06.1\fast-downward.py
+
+[Sistema] Invio dominio e problema al planner.
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo stimato: 10
+
+Piano generato:
+01. (move-civilian soccorritore_civile l_3_0 l_2_0)
+02. (move-civilian soccorritore_civile l_2_0 l_2_1)
+03. (move-civilian soccorritore_civile l_2_1 l_2_2)
+04. (move-civilian soccorritore_civile l_2_2 l_2_3)
+05. (secure-area soccorritore_civile l_2_3)
+06. (move-medic medico l_3_0 l_2_0)
+07. (move-medic medico l_2_0 l_2_1)
+08. (move-medic medico l_2_1 l_2_2)
+09. (move-medic medico l_2_2 l_2_3)
+
+=================
+Fine: 2026-06-15T19:02:49
+Exit code: 0

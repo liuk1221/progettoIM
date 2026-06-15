@@ -1,0 +1,77 @@
+{
+  "name": "Recupero sotto macerie - scenario con macerie",
+  "rows": 5,
+  "cols": 5,
+  "medic_start": [4, 0],
+  "explorer_start": [4, 0],
+  "civilian_start": [4, 0],
+  "blocked_cells": [[0, 4], [1, 1], [2, 1], [3, 0], [3, 1], [3, 3], [4, 4]],
+  "rubble_gates": [
+    [[4, 0], [4, 1]],
+    [[4, 2], [3, 2]],
+    [[2, 2], [2, 3]],
+    [[2, 4], [1, 4]],
+    [[1, 3], [0, 3]],
+    [[0, 2], [0, 3]]
+  ],
+  "unsafe_cells": [[4, 3], [2, 4], [0, 3]],
+  "triage_rules": {
+    "signs": {
+      "respiro debole": 40,
+      "sanguinamento moderato": 32,
+      "sanguinamento lieve": 18,
+      "dolore toracico": 34,
+      "polso debole": 28,
+      "confuso": 18,
+      "pallido": 14,
+      "cosciente": -10,
+      "risponde a voce": -8,
+      "respiro regolare": -6
+    },
+    "observations": {
+      "area non messa in sicurezza": 18,
+      "polvere densa": 8,
+      "accesso stretto": 5,
+      "spazio ristretto": 8,
+      "instabilita parete": 14,
+      "nessun cedimento attivo": -8,
+      "punto medico avanzato": 0,
+      "accesso esterno libero": 0,
+      "varco ostruito vicino": 6
+    }
+  },
+  "areas": [
+    {
+      "id": "punto_accesso",
+      "location": [4, 0],
+      "observations": ["punto medico avanzato", "accesso esterno libero"]
+    },
+    {
+      "id": "corridoio_sud",
+      "location": [4, 3],
+      "observations": ["polvere densa", "accesso stretto", "area non messa in sicurezza"],
+      "patient": {
+        "id": "paziente_a",
+        "signs": ["respiro debole", "sanguinamento moderato", "cosciente"]
+      }
+    },
+    {
+      "id": "stanza_est",
+      "location": [2, 4],
+      "observations": ["spazio ristretto", "area non messa in sicurezza", "nessun cedimento attivo", "varco ostruito vicino"],
+      "patient": {
+        "id": "paziente_b",
+        "signs": ["dolore toracico", "polso debole", "confuso"]
+      }
+    },
+    {
+      "id": "stanza_nord",
+      "location": [0, 3],
+      "observations": ["polvere densa", "instabilita parete", "area non messa in sicurezza"],
+      "patient": {
+        "id": "paziente_c",
+        "signs": ["respiro debole", "sanguinamento lieve", "pallido", "risponde a voce"]
+      }
+    }
+  ]
+}

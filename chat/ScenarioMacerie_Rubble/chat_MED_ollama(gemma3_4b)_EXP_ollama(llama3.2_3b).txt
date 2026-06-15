@@ -1,0 +1,237 @@
+Combinazione test
+=================
+Inizio: 2026-06-15T22:54:11
+Medico: ollama/gemma3:4b
+Esploratore: ollama/llama3.2:3b
+Comando: C:\Users\liukq\AppData\Local\Programs\Python\Python312\python.exe main.py
+
+======================================================================
+Avvio intervento
+======================================================================
+
+[Sistema] Recupero sotto macerie - scenario con macerie
+
+[Sistema] .env caricato: C:\Users\liukq\Desktop\progettoIM\.env
+
+[Sistema] Modelli: esploratore=ollama/llama3.2:3b, medico=ollama/gemma3:4b
+
+======================================================================
+Esplorazione guidata con PDDL
+======================================================================
+
+[Medico (ollama)] Esploratore, inizieremo l'esplorazione di zona in zona tramite PDDL. Segui le mie istruzioni per punto_accesso, poi corridoio_sud, stanza_est e infine stanza_nord.
+
+[Medico (ollama)] Dirigiti verso corridoio_sud. L'area più vicina e non ancora esplorata è il corridoio sud, che si trova a est dalla posizione attuale dell'esploratore.
+
+======================================================================
+Planning esploratore: corridoio_sud
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_corridoio_sud.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 7
+
+Piano esploratore:
+01. (remove-rubble-explorer esploratore l_4_0 l_4_1)
+02. (move-explorer esploratore l_4_0 l_4_1)
+03. (move-explorer esploratore l_4_1 l_4_2)
+04. (move-explorer esploratore l_4_2 l_4_3)
+
+[Esploratore (ollama)] "Medico, ho raggiunto l'area di riferimento corridoio_sud. La mia posizione attuale è a coordinate (4, 3). Invierò un report dettagliato sulla situazione una volta completata la scansione."
+
+[Esploratore -> Medico (ollama)] Mi trovo nel corridoio sud dell'edificio crollato. La mia visuale è limitata a causa della polvere densa che si sta accumulando attorno a me. Il corridoio è stretto e sembra essere stato abbandonato da tempo, poiché non ci sono segni di vita o di attività recenti.
+
+La mia posizione è indicizzata come (4, 3), ma non riesco a capire esattamente dove si trovi in relazione all'edificio. La mia attenzione è focalizzata sulla scena davanti a me.
+
+Vedo un paziente che sembra essere stato ferito. Si trova nella stanza adiacente al corridoio, probabilmente la stanza di emergenza o il pronto soccorso. Il paziente, identificato come paziente_a, mostra segni di sanguinamento moderato e ha un respiro debole. Tuttavia, sembra essere cosciente e non ci sono segni di disperazione o di allarme.
+
+L'area intorno al paziente è stata lasciata senza protezione, come se non fosse stato considerato un luogo sicuro per il trattamento del paziente. La scena è piuttosto disordinata e sembra che la persona responsabile della cura del paziente sia scomparsa o non sia più presente.
+
+La mia priorità è di raccogliere informazioni e fornire assistenza al paziente, se possibile.
+
+[Medico -> Esploratore] Puoi descrivere più precisamente la posizione del paziente rispetto alla tua posizione?
+
+[Esploratore -> Medico (ollama)] Ciao medico, sono felice di aiutarti. Tuttavia, devo chiarire che non ho informazioni precise sulla posizione del paziente rispetto alla mia posizione. Non ho dati sufficienti per determinare la distanza tra i due.
+
+Tuttavia, posso dirti che entrambi si trovano in aree da mettere in sicurezza e hanno segni di lesione. Il paziente A si trova nella stanza sud con un dolore toracico e un polso debole, mentre il paziente B si trova nella stanza nord con un respiro debole e un sanguinamento moderato.
+
+Sei libero di muoverti verso qualsiasi area per raggiungere i pazienti. Posso aiutarti a navigare tra le aree se necessario.
+
+[Medico -> Esploratore] Qual è l'estensione esatta del sanguinamento del paziente?
+
+[Esploratore -> Medico (ollama)] Non posso fornire una risposta dettagliata sulla condizione del paziente senza ulteriori informazioni. Posso però fornire alcune osservazioni generali basate sulle informazioni disponibili.
+
+In base alle osservazioni, tutti i tre pazienti (paziente_a, paziente_b e paziente_c) presentano segni di sanguinamento o debolezza del polso. Tuttavia, non posso determinare l'estensione esatta del sanguinamento senza ulteriori informazioni sulla gravità dei sintomi, la quantità di sangue perso e le possibili cause del sanguinamento.
+
+Inoltre, non ho informazioni sulla distanza tra i pazienti e il punto di soccorso, né sulla disponibilità di mezzi di primo soccorso o di attrezzature mediche nella zona.
+
+Per determinare l'estensione esatta del sanguinamento, sarebbe necessario avere ulteriori informazioni sul paziente, come ad esempio la gravità dei sintomi, la quantità di sangue perso e le possibili cause del sanguinamento.
+
+[Medico -> Esploratore] Ci sono altri pazienti o feriti nell'area?
+
+[Esploratore -> Medico (ollama)] Non posso fornire informazioni sulla presenza di altri pazienti o feriti nell'area senza ulteriori dati.
+
+[Medico (ollama)] Dirigiti verso stanza_est. Il report indica che il paziente si trova nella stanza adiacente al corridoio. La stanza est è l'unica area non ancora esplorata adiacente al corridoio, quindi è la scelta più logica per raggiungere il paziente.
+
+======================================================================
+Planning esploratore: stanza_est
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_est.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 11
+
+Piano esploratore:
+01. (move-explorer esploratore l_4_3 l_4_2)
+02. (remove-rubble-explorer esploratore l_4_2 l_3_2)
+03. (move-explorer esploratore l_4_2 l_3_2)
+04. (move-explorer esploratore l_3_2 l_2_2)
+05. (move-explorer esploratore l_2_2 l_1_2)
+06. (move-explorer esploratore l_1_2 l_1_3)
+07. (move-explorer esploratore l_1_3 l_2_3)
+08. (move-explorer esploratore l_2_3 l_2_4)
+
+[Esploratore (ollama)] "Medico, ho raggiunto l'area della stanza_est in posizione (2, 4). Invio report di esplorazione."
+
+[Esploratore -> Medico (ollama)] Mi trovo nella stanza_est, a una posizione di (2, 4). La stanza sembra essere stata abbandonata in fretta. Il pavimento è coperto da un misto di detriti e rovine, creando un ambiente difficile da navigare. L'aria è densa e pesante, con un odore sgradevole che riempie la stanza.
+
+Vedo una serie di oggetti sparsi in giro, come mobili rotti e pezzi di vetro rotto. La stanza sembra essere stata devastata da un evento improvviso. Un varco vicino alla mia posizione è ostruito da una massa di rovine, rendendo difficile l'accesso a altre aree della stanza.
+
+Mi concentro sulla paziente paziente_b, che giace in un angolo della stanza. Ha il polso debole e sembra confusa. Sente dolore al torace, ma non posso vedere alcun segno di ferite o lesioni visibili. La sua condizione sembra essere preoccupante, ma non posso fare nulla per aiutarla senza sapere cosa sta succedendo.
+
+[Medico -> Esploratore] Qual è la frequenza cardiaca del paziente_b?
+
+[Esploratore -> Medico (ollama)] Non posso fornire una risposta specifica sulla frequenza cardiaca del paziente_b senza ulteriori informazioni. La domanda richiede dati che non sono disponibili nello scenario osservato.
+
+[Medico -> Esploratore] Puoi descrivere meglio l'odore sgradevole nella stanza?
+
+[Esploratore -> Medico (ollama)] Non posso fornire una risposta dettagliata sull'odore sgradevole nella stanza.
+
+[Medico -> Esploratore] Ci sono altri pazienti nell'area?
+
+[Esploratore -> Medico (ollama)] Non posso confermare la presenza di altri pazienti nell'area. Non ho informazioni sufficienti per determinare se ci sono altri individui feriti o in difficoltà all'interno dell'edificio crollato.
+
+[Medico (ollama)] Dirigiti verso stanza_nord. Il report del corridoio sud indica un ambiente stretto e abbandonato, mentre la stanza est presenta detriti e un odore sgradevole. La stanza nord è l'unica area non ancora esplorata, quindi rappresenta una potenziale fonte di informazioni e risorse.
+
+======================================================================
+Planning esploratore: stanza_nord
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_nord.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 7
+
+Piano esploratore:
+01. (move-explorer esploratore l_2_4 l_2_3)
+02. (move-explorer esploratore l_2_3 l_1_3)
+03. (remove-rubble-explorer esploratore l_1_3 l_0_3)
+04. (move-explorer esploratore l_1_3 l_0_3)
+
+[Esploratore (ollama)] "Medico, ho raggiunto l'area della stanza nord. La mia posizione è stabile a (0, 3). Invio report di esplorazione e stato dell'ambiente."
+
+[Esploratore -> Medico (ollama)] Mi trovo nella stanza nord dell'edificio crollato. La stanza è circondata da polvere densa che si muove lentamente nell'aria, creando un'atmosfera pesante e opaca. Le pareti sembrano instabili, con segni di scosse e danni visibili. Non ci sono segni di allarme o di avviso di pericoli nella zona.
+
+Mi avvicino al paziente, che giace a terra con un respiro debole. Il suo aspetto è pallido e affaticato, ma sembra ancora in grado di rispondere a voce. La sua pelle è coperta da una leggera macchia di sangue, ma non sembra essere grave. Il paziente sembra in stato di shock, ma non ci sono segni di ferite o di lesioni più gravi.
+
+La stanza è buia e silenziosa, con solo il rumore della polvere che si muove nell'aria. Non c'è segno di attività o di movimento nella zona. Il paziente sembra essere stato lasciato da solo in questa stanza, senza alcuna cura o assistenza.
+
+[Medico (ollama)] Robot esploratore, report ricevuto. Autorizzo spostamento verso la stanza nord per assistenza al paziente. Conferma ricezione e procedi con cautela.
+
+[Medico (ollama)] Dirigiti verso punto_accesso. Il paziente a è nella stanza adiacente al corridoio sud, e il punto accesso potrebbe essere un buon punto di partenza per valutare la situazione generale e raggiungere altre aree.
+
+======================================================================
+Planning esploratore: punto_accesso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_punto_accesso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 19
+
+Piano esploratore:
+01. (remove-rubble-explorer esploratore l_0_3 l_0_2)
+02. (move-explorer esploratore l_0_3 l_0_2)
+03. (move-explorer esploratore l_0_2 l_1_2)
+04. (move-explorer esploratore l_1_2 l_2_2)
+05. (move-explorer esploratore l_2_2 l_3_2)
+06. (remove-rubble-explorer esploratore l_3_2 l_4_2)
+07. (move-explorer esploratore l_3_2 l_4_2)
+08. (move-explorer esploratore l_4_2 l_4_1)
+09. (remove-rubble-explorer esploratore l_4_1 l_4_0)
+10. (move-explorer esploratore l_4_1 l_4_0)
+
+[Esploratore (ollama)] "Medico, ho raggiunto il punto d'appoggio. Invio report di esplorazione."
+
+[Esploratore -> Medico (ollama)] Mi trovo in un ambiente deserto e silenzioso. Sono a pochi metri dal punto d'ingresso, che sembra essere stato utilizzato per l'accesso all'edificio. L'area è libera da ostacoli e non ci sono segni di attività recente. Non vedo nessun paziente o persona in generale.
+
+Davanti a me si trova un punto medico avanzato, che sembra essere stato abbandonato senza preoccupazioni. La struttura è imponente e potrebbe essere stata utilizzata per trattamenti complessi. Non vedo nessun segno di disordine o danni.
+
+A sinistra del punto d'ingresso, c'è un accesso esterno libero che sembra essere stato utilizzato per l'uscita dall'edificio. L'area è libera da ostacoli e non ci sono segni di attività recente. Non vedo nessun paziente o persona in generale.
+
+L'ambiente è silenzioso e deserto, con solo il rumore del vento che soffia attraverso le strutture danneggiate. Non vedo nessun segno di vita o attività.
+
+[Medico (ollama)] Report ricevuto. Autorizzo spostamento verso il punto medico avanzato. Conferma la tua posizione.
+
+[Esploratore -> Medico (ollama)] "Medico, ho completato l'esplorazione di tutte le zone richieste. Nessuna zona è stata lasciata senza essere esaminata. I dati raccolti sono stati trasmessi e sono pronti per la revisione."
+
+[Medico (ollama)] Robot esploratore, inizio analisi report e risposte. Attendo aggiornamenti.
+
+======================================================================
+Decisione medica
+======================================================================
+
+[Medico (ollama)] Paziente prioritario: paziente_b. La priorità viene assegnata al paziente B a causa della combinazione di sintomi critici: dolore toracico, polso debole e confusione. Questi segni suggeriscono una condizione medica grave che richiede un intervento immediato. Sebbene il paziente A sia anche in condizioni gravi, la consapevolezza del paziente B aumenta l'urgenza. Il paziente C è il meno urgente tra i tre.
+
+Priorita':
+  1. paziente_b - Il paziente B presenta un dolore toracico, polso debole e confusione, indicando una potenziale emergenza cardiaca o lesioni interne. La sua condizione è più grave rispetto agli altri pazienti osservati.
+  2. paziente_a - Il paziente A presenta sanguinamento moderato e respiro debole, necessitando di attenzione immediata per prevenire l'ipotensione e garantire la respirazione. Tuttavia, è cosciente.
+  3. paziente_c - Il paziente C mostra segni di respiro debole, sanguinamento lieve e instabilità della parete, indicando un potenziale trauma o lesione strutturale. La sua condizione è meno critica rispetto ai primi due pazienti.
+
+======================================================================
+Aggiornamento PDDL
+======================================================================
+
+[Sistema] Aggiorno il problema PDDL con varchi, macerie e sicurezza dell'area.
+
+[Sistema] Problema aggiornato: C:\Users\liukq\Desktop\progettoIM\output\problem_rescue_generated.pddl
+
+======================================================================
+Planning con Fast Downward
+======================================================================
+
+[Sistema] Fast Downward: C:\Users\liukq\Desktop\progettoIM\fast-downward-24.06.1\fast-downward.py
+
+[Sistema] Invio dominio e problema al planner.
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo stimato: 26
+
+Piano generato:
+01. (remove-rubble-civilian soccorritore_civile l_4_0 l_4_1)
+02. (move-civilian soccorritore_civile l_4_0 l_4_1)
+03. (move-civilian soccorritore_civile l_4_1 l_4_2)
+04. (remove-rubble-civilian soccorritore_civile l_4_2 l_3_2)
+05. (move-civilian soccorritore_civile l_4_2 l_3_2)
+06. (move-civilian soccorritore_civile l_3_2 l_2_2)
+07. (move-medic medico l_4_0 l_4_1)
+08. (move-medic medico l_4_1 l_4_2)
+09. (move-medic medico l_4_2 l_3_2)
+10. (move-medic medico l_3_2 l_2_2)
+11. (remove-rubble-civilian soccorritore_civile l_2_2 l_2_3)
+12. (move-civilian soccorritore_civile l_2_2 l_2_3)
+13. (move-medic medico l_2_2 l_2_3)
+14. (move-civilian soccorritore_civile l_2_3 l_2_4)
+15. (secure-area soccorritore_civile l_2_4)
+16. (move-medic medico l_2_3 l_2_4)
+
+=================
+Fine: 2026-06-15T22:56:01
+Exit code: 0

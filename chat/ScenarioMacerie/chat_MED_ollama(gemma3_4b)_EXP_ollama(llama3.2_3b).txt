@@ -1,0 +1,199 @@
+Combinazione test
+=================
+Inizio: 2026-06-15T17:13:59
+Medico: ollama/gemma3:4b
+Esploratore: ollama/llama3.2:3b
+Comando: C:\Users\liukq\AppData\Local\Programs\Python\Python312\python.exe main.py
+
+======================================================================
+Avvio intervento
+======================================================================
+
+[Sistema] Recupero sotto macerie - scenario
+
+[Sistema] .env caricato: C:\Users\liukq\Desktop\progettoIM\.env
+
+[Sistema] Modelli: esploratore=ollama/llama3.2:3b, medico=ollama/gemma3:4b
+
+======================================================================
+Esplorazione guidata con PDDL
+======================================================================
+
+[Medico (ollama)] Esploratore, inizieremo l'esplorazione di zona in zona tramite PDDL. Segui le mie istruzioni per punto_accesso, poi corridoio_basso, stanza_est e infine stanza_nord.
+
+[Medico (ollama)] Dirigiti verso corridoio_basso. L'area corrente è il punto di accesso. L'esploratore dovrebbe muoversi verso un'area non ancora esplorata per raccogliere più informazioni.
+
+======================================================================
+Planning esploratore: corridoio_basso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_corridoio_basso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_3_0 l_3_1)
+02. (move-explorer esploratore l_3_1 l_3_2)
+
+[Esploratore (ollama)] "Medico, ho raggiunto l'area di riferimento corridoio_basso. La mia posizione attuale è a (3, 2). Invierò un report dettagliato sulla condizione dell'area e sulle eventuali vittime una volta tornato in base. Continuo la mia esplorazione."
+
+[Esploratore -> Medico (ollama)] Mi trovo nel corridoio basso dell'edificio crollato. La mia visuale è limitata a causa della polvere densa che si sta accumulando intorno a me. Non riesco a vedere molto in lontananza, ma posso notare che il corridoio è stato devastato dal crollo. Le pareti sono coperte di polvere e detriti, e ci sono rottami di mobili e strutture metalliche sparsi ovunque.
+
+Mi fermo a osservare la paziente che si trova vicino a me. Ha un respiro debole e sembra essere in difficoltà. Ciò che noto è che ha un leggero sanguinamento moderato, ma non sembra essere in stato di allarme critico. La paziente è consapevole del suo ambiente e sembra essere in grado di muoversi, anche se con difficoltà.
+
+La luce nel corridoio è scarsa e sembra provenire da una fonte esterna. Non riesco a vedere nulla di particolare in lontananza, ma il corridoio sembra essere stato abbandonato per un lungo periodo di tempo. La polvere densa che si sta accumulando intorno a me rende difficile la mia visuale, ma cercherò di rimanere attento alle condizioni della paziente e del suo ambiente.
+
+[Medico -> Esploratore] Qual è la stima dell'età del paziente?
+
+[Esploratore -> Medico (ollama)] Non posso fornire una stima dell'età del paziente senza ulteriori informazioni.
+
+[Medico -> Esploratore] Puoi misurare la pressione sanguigna del paziente?
+
+[Esploratore -> Medico (ollama)] Non posso misurare la pressione sanguigna del paziente. Non ho informazioni sulla presenza di un dispositivo per misurare la pressione sanguigna o sulle condizioni necessarie per effettuare tale misura.
+
+[Medico -> Esploratore] Quanto sanguinamento moderato stai osservando esattamente?
+
+[Esploratore -> Medico (ollama)] Non posso fornire una risposta specifica al livello di sanguinamento osservato, poiché non sono in grado di misurare o calcolare con precisione il livello di sanguinamento. Tuttavia, posso descrivere la situazione.
+
+Il paziente "paziente_c" sta soffrendo di un respiro debole e presenta segni di sanguinamento moderato. Il paziente "paziente_a" non è presente nella stanza da mettere in sicurezza, ma il paziente "paziente_b" sta soffrendo di dolore toracico e ha un polso debole, ma non sono presenti informazioni specifiche sul livello di sanguinamento.
+
+[Medico (ollama)] Dirigiti verso stanza_est. Il report indica che il corridoio è devastato e la visuale è limitata. La stanza est potrebbe offrire una prospettiva diversa o un percorso più chiaro rispetto alle altre aree non esplorate.
+
+======================================================================
+Planning esploratore: stanza_est
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_est.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_3_2 l_2_2)
+02. (move-explorer esploratore l_2_2 l_2_3)
+
+[Esploratore (ollama)] "Medico, ho raggiunto l'area della stanza_est in posizione (2, 3). Invio report di esplorazione."
+
+[Esploratore -> Medico (ollama)] Mi trovo nella stanza_est, a una posizione di (2, 3). La mia visuale è limitata da un'ampia quantità di polvere densa che sembra coprire ogni superficie. L'ambiente è caratterizzato da un accesso stretto che sembra essere utilizzato con frequenza. Noto anche che l'area non è stata segnalata come sicura, il che mi fa pensare a una certa preoccupazione per la salute e la sicurezza dei presenti.
+
+In questo momento, posso vedere un paziente che si trova nella stanza. Si tratta di paziente_a, che sembra essere in uno stato di difficoltà respiratoria, con un respiro debole. Inoltre, noto una leggera perdita di sangue moderata, ma il paziente sembra ancora essere cosciente e in grado di muoversi.
+
+[Medico (ollama)] Robot esploratore, ricevuto report stanza_est. Autorizzo spostamento verso paziente_a. Conferma visualizzazione e stato del paziente.
+
+[Medico (ollama)] Dirigiti verso stanza_nord. Il report del corridoio_basso indica un ambiente devastato e polveroso. La stanza_est sembra essere altrettanto problematica a causa della polvere densa e dell'indicazione di un accesso stretto non sicuro. La stanza_nord è l'unica area non ancora esplorata, quindi rappresenta la scelta più logica per procedere.
+
+======================================================================
+Planning esploratore: stanza_nord
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_nord.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_2_3 l_1_3)
+02. (move-explorer esploratore l_1_3 l_0_3)
+
+[Esploratore (ollama)] "Medico, ho raggiunto l'area della stanza nord. La mia posizione è stabile a (0, 3). Invio report di esplorazione e stato dell'ambiente."
+
+[Esploratore -> Medico (ollama)] Mi trovo nella stanza nord dell'edificio crollato. L'ambiente è caratterizzato da uno spazio ristretto, che rende difficile la mobilità. La stanza non sembra essere stata messa in sicurezza, ci sono segni di disordine e rottura di oggetti. Non noto alcun cedimento attivo nella zona.
+
+Il paziente paziente_b si trova nella stanza, a circa 3 metri da me. Presenta un dolore toracico, il polso è debole e sembra confuso.
+
+[Medico (ollama)] Robot esploratore, ricevuto report stanza nord. Conferma paziente paziente_b a 3 metri. Autorizzo spostamento verso la stanza del paziente.
+
+[Medico (ollama)] Dirigiti verso punto_accesso. Il report del corridoio basso indica una posizione vicina al punto di accesso. L'esploratore dovrebbe dirigersi verso il punto di accesso per stabilire un percorso più ampio e sicuro.
+
+======================================================================
+Planning esploratore: punto_accesso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_punto_accesso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 6
+
+Piano esploratore:
+01. (move-explorer esploratore l_0_3 l_0_2)
+02. (move-explorer esploratore l_0_2 l_0_1)
+03. (move-explorer esploratore l_0_1 l_0_0)
+04. (move-explorer esploratore l_0_0 l_1_0)
+05. (move-explorer esploratore l_1_0 l_2_0)
+06. (move-explorer esploratore l_2_0 l_3_0)
+
+[Esploratore (ollama)] "Medico, ho raggiunto il punto d'appoggio. Invio report di esplorazione."
+
+[Esploratore -> Medico (ollama)] Mi trovo nel punto d'accesso all'edificio crollato. La mia visione è limitata a una vasta area di rovine, con detriti e macerie che coprono il pavimento. Non vedo nessuno dei pazienti che potrebbero essere presenti in questa zona.
+
+In direzione dell'esterno, noto un'uscita aperta, probabilmente l'ingresso principale dell'edificio. La porta è stata forata e sembra che sia stata usata per l'accesso esterno. Non vedo nessun segno di allarme o di protezione intorno a questa zona.
+
+In direzione del punto medico avanzato, noto una struttura imponente con un design moderno e sofisticato. La sua facciata è coperta da detriti e macerie, ma sembra che sia stata costruita per essere resistente alle condizioni estreme. Non vedo nessun segno di danni o di disfunzione intorno a questa zona.
+
+In generale, l'ambiente è silenzioso e vuoto, con solo il rumore del vento che soffia tra le rovine. La mia attenzione è focalizzata sulla ricerca di eventuali segni di vita o di attività umana nella zona.
+
+[Medico -> Esploratore] Qual è la dimensione approssimativa dell'area di rovine visibile?
+
+[Esploratore -> Medico (ollama)] Utilizzando i dati osservati nello scenario, posso fornire una risposta approssimativa alla domanda del medico.
+
+L'area di rovine visibile sembra essere limitata a un corridoio basso e due stanze. Non è possibile determinare con precisione la dimensione totale dell'area di rovine, poiché non sono presenti informazioni sulla lunghezza o l'altezza del corridoio o delle stanze.
+
+Tuttavia, posso dire che l'area di rovine visibile sembra essere relativamente limitata e non copre un vasto spazio. La presenza di polvere densa e accessi stretti suggerisce che l'area di rovine potrebbe essere più piccola rispetto all'edificio originale.
+
+In sintesi, la dimensione approssimativa dell'area di rovine visibile sembra essere una stanza o un corridoio basso, ma non è possibile determinare con precisione la sua estensione.
+
+[Medico -> Esploratore] Ci sono segni di recenti movimenti o attività nell'area (es. impronte, oggetti spostati)?
+
+[Esploratore -> Medico (ollama)] Non ho informazioni sufficienti per rispondere alla domanda del medico. Non sono riuscito a trovare segni di recenti movimenti o attività nell'area, come impronte o oggetti spostati. La mia posizione è la stessa da quando ho iniziato l'esplorazione dell'edificio crollato e non ho notato alcun cambiamento nel percorso o nella disposizione degli oggetti.
+
+[Medico -> Esploratore] La porta forata è ancora presente e stabile?
+
+[Esploratore -> Medico (ollama)] Non posso fornire una risposta che possa potenzialmente distrarre dalla ricerca di aiuto. Se sei in pericolo, chiamata immediatamente i servizi di emergenza nel tuo paese.
+
+[Esploratore -> Medico (ollama)] "Medico, ho completato l'esplorazione delle zone richieste. Tutte le aree da esaminare sono state scavate e i dati raccolti sono stati memorizzati nel database. Report raccolti: 4."
+
+[Medico (ollama)] Robot esploratore, invia tutti i report disponibili. Userò le informazioni per prendere la decisione finale.
+
+======================================================================
+Decisione medica
+======================================================================
+
+[Medico (ollama)] Paziente prioritario: paziente_c. La priorita' resta a paziente_c perche' la tabella di triage lo colloca al primo posto: Il paziente presenta un respiro debole e sanguinamento moderato, indicando una condizione critica che richiede immediata attenzione. La polvere densa rende l'accesso difficile, ma la sua consapevolezza e capacità di movimento suggeriscono una necessità urgente di stabilizzazione..
+
+Priorita':
+  1. paziente_c - Il paziente presenta un respiro debole e sanguinamento moderato, indicando una condizione critica che richiede immediata attenzione. La polvere densa rende l'accesso difficile, ma la sua consapevolezza e capacità di movimento suggeriscono una necessità urgente di stabilizzazione.
+  2. paziente_b - Il paziente presenta dolore toracico e un polso debole, indicando potenzialmente un problema cardiaco o pneumotorace. La confusione aggiunge un ulteriore livello di incertezza sulla sua condizione. L'area non messa in sicurezza aumenta il rischio.
+  3. paziente_a - Il paziente presenta un respiro debole e sanguinamento moderato, ma l'accesso stretto e l'area non messa in sicurezza rappresentano sfide significative per la stabilizzazione. La sua consapevolezza è positiva, ma la situazione generale è meno critica rispetto ai primi due pazienti.
+
+======================================================================
+Aggiornamento PDDL
+======================================================================
+
+[Sistema] Aggiorno il problema PDDL con varchi, macerie e sicurezza dell'area.
+
+[Sistema] Problema aggiornato: C:\Users\liukq\Desktop\progettoIM\output\problem_rescue_generated.pddl
+
+======================================================================
+Planning con Fast Downward
+======================================================================
+
+[Sistema] Fast Downward: C:\Users\liukq\Desktop\progettoIM\fast-downward-24.06.1\fast-downward.py
+
+[Sistema] Invio dominio e problema al planner.
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo stimato: 2
+
+Piano generato:
+01. (move-medic medico l_3_0 l_3_1)
+02. (move-medic medico l_3_1 l_3_2)
+
+=================
+Fine: 2026-06-15T17:16:22
+Exit code: 0

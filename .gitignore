@@ -1,2 +1,13 @@
 /ProgettoOldEsoneri
 .env
+/fast-downward-24.06.1
+
+__pycache__/
+*.pyc
+output/sas_plan
+.venv
+
+/chat/Manual
+
+
+/output

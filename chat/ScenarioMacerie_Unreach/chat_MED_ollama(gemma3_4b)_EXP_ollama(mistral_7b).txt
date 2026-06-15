@@ -1,0 +1,158 @@
+Combinazione test
+=================
+Inizio: 2026-06-15T19:11:00
+Medico: ollama/gemma3:4b
+Esploratore: ollama/mistral:7b
+Comando: C:\Users\liukq\AppData\Local\Programs\Python\Python312\python.exe main.py
+
+======================================================================
+Avvio intervento
+======================================================================
+
+[Sistema] Recupero sotto macerie - scenario con stanza irraggiungibile
+
+[Sistema] .env caricato: C:\Users\liukq\Desktop\progettoIM\.env
+
+[Sistema] Modelli: esploratore=ollama/mistral:7b, medico=ollama/gemma3:4b
+
+======================================================================
+Esplorazione guidata con PDDL
+======================================================================
+
+[Medico (ollama)] Esploratore, inizieremo l'analisi della zona a zone. Utilizzerò PDDL per la pianificazione del percorso. Inizia con il punto_accesso.
+
+[Medico (ollama)] Dirigiti verso corridoio_basso. L'area corrente è il punto di accesso. L'esploratore dovrebbe muoversi verso un'area non ancora esplorata per raccogliere più informazioni.
+
+======================================================================
+Planning esploratore: corridoio_basso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_corridoio_basso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_3_0 l_3_1)
+02. (move-explorer esploratore l_3_1 l_3_2)
+
+[Esploratore (ollama)] "Raggiunta posizione (3, 2) in corridoio_basso. Inviando report di situazione."
+
+[Esploratore -> Medico (ollama)] Nell'area del corridoio basso, alla posizione (3, 2), si trova una densa polvere. In questa stessa area, è presente un paziente identificato come paziente_c, che mostra un respiro debole e sanguinamento moderato. Il paziente è cosciente.
+
+[Medico (ollama)] Robot esploratore, ricevuto report corridoio_basso (3,2). Conferma presenza paziente_c: respiro debole, sanguinamento moderato, cosciente. Autorizzo spostamento verso il paziente.
+
+[Medico (ollama)] Dirigiti verso stanza_est. Il paziente paziente_c si trova nel corridoio basso, vicino alla posizione attuale dell'esploratore. La stanza est è l'unica area non ancora esplorata adiacente al corridoio basso e potrebbe contenere informazioni utili o percorsi alternativi.
+
+======================================================================
+Planning esploratore: stanza_est
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_est.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 2
+
+Piano esploratore:
+01. (move-explorer esploratore l_3_2 l_2_2)
+02. (move-explorer esploratore l_2_2 l_2_3)
+
+[Esploratore (ollama)] "Stanza_est raggiunta con successo. Inviando report di posizione (2, 3)."
+
+[Esploratore -> Medico (ollama)] Nella stanza Est, alla posizione (2, 3), si trova un ambiente caratterizzato da una densa polvere. L'accesso è stretto e non sembra essere stato messo in sicurezza. In questa zona, ho individuato il paziente paziente_a, che presenta dolori toracici, un polso debole e appare confuso.
+
+[Medico -> Esploratore] Qual è la densità approssimativa della polvere?
+
+[Esploratore -> Medico (ollama)] La densità approssimativa della polvere, a partire dai dati osservati, sembra essere elevata. In particolare, nel corridoio basso e nelle stanze est e nord la polvere è densa. Tuttavia, non è possibile fornire una misura esatta di densità in quanto il robot esploratore non dispone di strumenti per effettuare tali misurazioni.
+
+[Medico -> Esploratore] Può descrivere meglio l'accesso stretto? È un passaggio o una porta?
+
+[Esploratore -> Medico (ollama)] Il passaggio stretto che hai richiesto si trova nella stanza nord, posizione (0, 3). Non è una porta ma un accesso stretto, come osservato nelle note dell'area.
+
+[Medico -> Esploratore] Il paziente ha segni di lesioni evidenti oltre a quelli menzionati?
+
+[Esploratore -> Medico (ollama)] Il paziente ha segni di lesioni evidenti oltre a quelli menzionati, in particolare presenta dolore toracico e polso debole.
+
+[Medico (ollama)] Dirigiti verso stanza_nord. Il paziente paziente_c si trova nel corridoio basso, vicino alla posizione attuale dell'esploratore. La stanza nord è l'unica area non ancora esplorata e potrebbe contenere informazioni utili o un percorso più sicuro verso il paziente.
+
+======================================================================
+Planning esploratore: stanza_nord
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_stanza_nord.pddl
+
+[Esploratore -> Medico (ollama)] Robot medico, il percorso richiesto non è stato trovato. Il planner PDDL non ha prodotto un percorso e Fast Downward non ha generato il file sas_plan. Non posso raggiungere la zona indicata (stanza_nord).
+
+[Sistema] Fallback ollama (gemma3:4b): Decisione post-blocco non valida: area alternativa assente.
+
+[Medico (ollama fallback)] La stanza stanza_nord non e' raggiungibile. Continuo verso la location alternativa raggiungibile piu' vicina.
+
+[Sistema] Fallback ollama (gemma3:4b): Decisione post-blocco non valida: area alternativa assente.
+
+[Medico (ollama fallback)] Dirigiti verso punto_accesso. La stanza stanza_nord non e' raggiungibile. Continuo verso la location alternativa raggiungibile piu' vicina.
+
+======================================================================
+Planning esploratore: punto_accesso
+======================================================================
+
+[Sistema] Problema esplorazione: C:\Users\liukq\Desktop\progettoIM\output\problem_exploration_punto_accesso.pddl
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo percorso esploratore: 4
+
+Piano esploratore:
+01. (move-explorer esploratore l_2_3 l_2_2)
+02. (move-explorer esploratore l_2_2 l_2_1)
+03. (move-explorer esploratore l_2_1 l_2_0)
+04. (move-explorer esploratore l_2_0 l_3_0)
+
+[Esploratore (ollama)] "Ho raggiunto il punto di accesso alla posizione (3, 0). Inviando presto il rapporto."
+
+[Esploratore -> Medico (ollama)] All'interno dell'area del punto di accesso, si trova un punto medico avanzato e l'ingresso esterno è libero. Non sono presenti pazienti visibili nella zona.
+
+[Medico (ollama)] Robot Esploratore, confermato report ricevuto. Autorizzo spostamento verso il punto medico avanzato.
+
+[Esploratore -> Medico (ollama)] Robot esploratore, missione completata. Alcune zone non raggiunte, in particolare la stanza nord. I report raccolti sono 3 e sono stati trasmessi al centro di controllo. Prossima operazione di recupero sarà condotta dal robot medico. Attesa ordini.
+
+[Medico (ollama)] Robot esploratore, invia immediatamente tutti i report disponibili. Userò le informazioni per prendere la decisione finale.
+
+======================================================================
+Decisione medica
+======================================================================
+
+[Medico (ollama)] Paziente prioritario: paziente_c. La decisione di selezionare il paziente C come priorità 1 si basa sulla gravità dei suoi segni vitali: sanguinamento moderato e respiro debole. Questi indicano una situazione critica che richiede un intervento immediato. Sebbene entrambi i pazienti presentino condizioni preoccupanti, la combinazione di sanguinamento e difficoltà respiratorie nel paziente C suggerisce una necessità più urgente di stabilizzazione e valutazione. L'area non messa in sicurezza del paziente A aumenta il rischio, ma la sua condizione è meno acuta rispetto a quella del paziente C.
+
+Priorita':
+  1. paziente_c - Il paziente C presenta sanguinamento moderato e respiro debole, indicando una condizione critica che richiede immediata attenzione. È cosciente, il che facilita la comunicazione e la valutazione.
+  2. paziente_a - Il paziente A presenta dolore toracico, polso debole e confusione, suggerendo un potenziale problema cardiaco o traumatico. L'accesso stretto e l'area non messa in sicurezza rappresentano ulteriori rischi e la sua condizione è meno immediata rispetto a quella del paziente C.
+
+======================================================================
+Aggiornamento PDDL
+======================================================================
+
+[Sistema] Aggiorno il problema PDDL con varchi, macerie e sicurezza dell'area.
+
+[Sistema] Problema aggiornato: C:\Users\liukq\Desktop\progettoIM\output\problem_rescue_generated.pddl
+
+======================================================================
+Planning con Fast Downward
+======================================================================
+
+[Sistema] Fast Downward: C:\Users\liukq\Desktop\progettoIM\fast-downward-24.06.1\fast-downward.py
+
+[Sistema] Invio dominio e problema al planner.
+
+[Sistema] Planner usato: Fast Downward
+
+[Sistema] Costo stimato: 2
+
+Piano generato:
+01. (move-medic medico l_3_0 l_3_1)
+02. (move-medic medico l_3_1 l_3_2)
+
+=================
+Fine: 2026-06-15T19:13:47
+Exit code: 0
