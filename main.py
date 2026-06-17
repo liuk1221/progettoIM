@@ -1,4 +1,4 @@
-import json
+﻿import json
 import os
 import sys
 import time
@@ -156,6 +156,20 @@ class TriageDecision:
         self.model = model                                      #Nome del modello usato per generare la decisione
         self.used_fallback = used_fallback                      #True se e' stata usata la fallback
         self.error = error                                      #Eventuale errore avvenuto durante generazione/validazione
+
+
+#Classe stato esplorazione
+#Raccoglie i dati prodotti durante le fasi 2-8: report, chiarimenti,
+#domande fatte dal medico, aree ancora da visitare e posizione dell'esploratore.
+class ExplorationState:
+    def __init__(self, scenario):
+        self.reports = []                                  #Report prodotti dall'esploratore nelle aree raggiunte
+        self.clarification_answers = []                    #Risposte dell'esploratore alle domande del medico
+        self.asked_questions = []                          #Domande formulate dal medico durante i chiarimenti
+        self.unexplored_areas = list(scenario.areas)       #Aree ancora da esplorare
+        self.explorer_location = scenario.explorer_start   #Posizione corrente logica dell'esploratore
+        self.pending_direction = None                      #Direzione già decisa dal medico dopo un blocco PDDL
+
 
 
 class RescueRobot:
@@ -1727,7 +1741,7 @@ def generate_exploration_problem(scenario, start_location, target_location, outp
     #Oggetti PDDL: una location per ogni cella libera.
     location_names = []
     for cell in free_cells(scenario):
-        location_names.append(location_name(cell))
+        location_names.append(location_name(cell)) #Location_name fa tipo "l_x_y" da [x,y]
 
     #link descrive l'adiacenza; clear i passaggi liberi; rubble quelli liberabili.
     link_lines = []
@@ -1849,7 +1863,7 @@ def generate_problem(scenario, selected_patient_id, output_path):
         if cell not in scenario.unsafe_cells:
             secured_lines.append("    (secured " + location_name(cell) + ")")
 
-    content = """(define (problem rubble_rescue_generated)
+    content = """(define (problem rescue_generated)
   ; Problema generato dal main dopo la scelta del paziente da parte del medico.
   ; Il medico puo' intervenire quando l'area del paziente e' in sicurezza.
 
@@ -1887,34 +1901,26 @@ def generate_problem(scenario, selected_patient_id, output_path):
     output_path.write_text(content, encoding="utf-8")
     return output_path
 
-#CORPO DELLA COMUNICAZIONE
-def main():
-    #Fase 1: preparo percorsi, carico .env e trasformo il JSON in oggetti Python
-    project_dir = Path(__file__).resolve().parent
-    env_path = project_dir / ".env"
-    env_loaded = load_dotenv(env_path)
+####################################################################################################################
+### METODI PER COSTRUIRE IL FLUSSO ###
+####################################################################################################################
 
-    #scenario = load_scenario(project_dir / "data" / "scenario_macerie.json")
-    #scenario = load_scenario(project_dir / "data" / "scenario_macerie_unreach.json")
-    scenario = load_scenario(project_dir / "data" / "scenario_macerie_rubble.json")
 
-    display = Display()
+#Fase 1: lo scenario viene caricato
+def load_default_scenario(project_dir):
+    #return load_scenario(project_dir / "data" / "scenario_macerie.json")
+    #return load_scenario(project_dir / "data" / "scenario_macerie_unreach.json")
+    return load_scenario(project_dir / "data" / "scenario_macerie_rubble.json")
 
-    #Fase 2: intestazione nel terminale e conferma dello scenario caricato
-    display.section("Avvio intervento")
-    display.system(scenario.name)
-    display.system(".env caricato: " + (str(env_path) if env_loaded else "non trovato"))
 
-    #Fase 3: costruisco i due client LLM sulla base dei paramtri .env o default
-    #Ollama o local sono i casi locali o deterministico. Groq è l'unico provider remoto con API_KEY
+#Preparazione dei due LLM della simulazione
+#Serve prima della fase 2 per creare i due agenti
+def build_rescue_robots(display):
     explorer_llm = os.getenv("EXPLORER_LLM", "ollama")
     medic_llm = os.getenv("MEDIC_LLM", "groq")
     explorer_client = create_llm_client(explorer_llm, role="explorer")
     medic_client = create_llm_client(medic_llm, role="medic")
-    explorer = RescueRobot(explorer_client, "robot esploratore")
-    medic = RescueRobot(medic_client, "robot medico")
 
-    #Stampo i modelli effettivi nel setting .env
     display.system(
         "Modelli: esploratore="
         + explorer_llm
@@ -1926,225 +1932,296 @@ def main():
         + medic_client.model
     )
 
-    #Fase 4: inizializzo lo stato dell'esplorazione
-    #reports contiene le descrizioni delle zone, clarification_answers le risposte ai dubbi del medico
-    display.section("Esplorazione guidata con PDDL")
-    reports = []
-    clarification_answers = []
-    asked_questions = []
-    unexplored_areas = list(scenario.areas)
-    explorer_location = scenario.explorer_start
-    pending_direction = None
+    return (
+        RescueRobot(explorer_client, "robot esploratore"),
+        RescueRobot(medic_client, "robot medico"),
+    )
 
-    #Messaggio iniziale del medico: non decide ancora nulla, apre solo la comunicazione
-    initial_message = medic.compose_message(
+
+#Fase 2: il medico apre la comunicazione.
+#Qui il medico non sceglie ancora una zona: dice all'esploratore che guiderà lui
+#l'esplorazione area per area e che gli spostamenti saranno pianificati con PDDL.
+def medic_opens_exploration_channel(display, medic, scenario, state):
+    #Compose_message ricade poi sul modulo llm_clients.py con llm.generate
+    opening = medic.compose_message(
         "robot esploratore",
         "spiegare che guiderai l'esplorazione zona per zona usando PDDL",
         "Scenario: "
         + scenario.name
         + "\nPosizione iniziale esploratore: "
-        + str(explorer_location)
+        + str(state.explorer_location)
         + "\nAree da esplorare: "
         + ", ".join([area.area_id for area in scenario.areas]),
         "Ti guidero' zona per zona. Ogni spostamento verra' pianificato con PDDL.",
     )
-    say_llm_result(display, "Medico", initial_message)
+    say_llm_result(display, "Medico -> Esploratore", opening)
 
-    #Fase 5: ciclo di esplorazione zona per zona
-    #A ogni iterazione il medico sceglie una zona, PDDL calcola lo spostamento,
-    #l'esploratore descrive la zona e il medico puo' chiedere chiarimenti
-    while unexplored_areas:
-        #Il medico sceglie la prossima area, ma non il percorso.
-        if pending_direction is None:
-            direction = medic.choose_next_area(
-                reports,
-                unexplored_areas,
-                explorer_location,
-                scenario,
-            )
-        else:
-            direction = pending_direction
-            pending_direction = None
-        show_llm_diagnostic(display, direction) #Se ci sono errori vengono mostrati e viene notificato utilizzo della fallback
 
-        #Recupero l'oggetto area scelto e mostro l'ordine operativo
+#Fase 3: il medico sceglie la prossima area da esplorare.
+#Se nel giro precedente c'è stato un blocco PDDL, pending_direction può
+#contenere la nuova area già scelta dal medico per continuare l'esplorazione.
+#Altrimenti chiedo al LLM medico di scegliere tra le aree rimaste.
+def medic_selects_next_area(display, medic, scenario, state):
+    if state.pending_direction is not None:
+        direction = state.pending_direction
+        state.pending_direction = None
+    else:
+        direction = medic.choose_next_area(
+            state.reports,
+            state.unexplored_areas,
+            state.explorer_location,
+            scenario,
+        )
+
+    show_llm_diagnostic(display, direction)
+    return direction
+
+
+#Fase 3: decisione del medico in un ordine visibile in CHAT. Il messaggio è hardcoded ma la decisione no.
+def medic_sends_exploration_order(display, direction, area):
+    display.say(
+        "Medico -> Esploratore (" + provider_label(direction) + ")",
+        "Dirigiti verso "
+        + area.area_id
+        + ". "
+        + direction.reason,
+    )
+
+
+#Funzione di stampa comune per i piani PDDL. Sia quello di esplorazione che quello di triage.
+#Viene usata nella fase 4 per il percorso dell'esploratore e nella fase 11
+#per il piano finale del medico e del soccorritore civile.
+def print_plan(display, cost_label, plan_label, plan):
+    display.system("Planner usato: " + plan.source)
+    display.system("Costo " + cost_label + ": " + str(plan.cost))
+    display.line("\nPiano " + plan_label + ":")
+    for index, action in enumerate(plan.actions, start=1):
+        display.line(str(index).zfill(2) + ". " + action)
+
+
+#Fase 4: il problema PDDL viene generato per spostare l'esploratore.
+#Il medico decide la destinazione, ma il percorso fisico viene calcolato dal planner.
+def plan_explorer_route(display, project_dir, scenario, state, area):
+    display.section("Planning esploratore: " + area.area_id)
+    exploration_problem_path = generate_exploration_problem(
+        scenario,
+        state.explorer_location,
+        area.location,
+        project_dir
+        / "output"
+        / ("problem_exploration_" + safe_file_stem(area.area_id) + ".pddl"),
+    )
+    display.system("Problema esplorazione: " + str(exploration_problem_path))
+
+    #Se l'esploratore e' gia' nella zona scelta, la fase 4 non deve invocare Fast Downward.
+    if state.explorer_location == area.location:
+        display.system("L'esploratore e' gia' nella zona indicata: nessuno spostamento necessario.")
+        return
+
+    plan = run_planner(
+        project_dir / "pddl" / "domain_rescue.pddl",
+        exploration_problem_path,
+        project_dir,
+    )
+    print_plan(display, "percorso esploratore", "esploratore", plan)
+
+
+#Fase 5: se il planner non trova un percorso, l'esploratore lo comunica al medico.
+#Il messaggio contiene area richiesta, partenza, destinazione ed errore PDDL.
+def explorer_reports_unreachable_area(display, explorer, area, state, error):
+    blocked_message = explorer.compose_message(
+        "robot medico",
+        "comunicare che non riesci a raggiungere la zona indicata",
+        "Area richiesta: "
+        + area.area_id
+        + "\nPartenza: "
+        + str(state.explorer_location)
+        + "\nDestinazione: "
+        + str(area.location)
+        + "\nIl planner PDDL non ha prodotto un percorso.\nErrore: "
+        + str(error),
+        "Non riesco a raggiungere "
+        + area.area_id
+        + ": il planner PDDL non ha trovato un percorso. Attendo una tua decisione.",
+    )
+    say_llm_result(display, "Esploratore -> Medico", blocked_message)
+
+
+#Fase 6: il medico decide cosa fare dopo una zona irraggiungibile.
+#Può chiudere la ricognizione e passare al triage, oppure scegliere un'altra
+#area ancora disponibile. In quel caso salvo la scelta in pending_direction.
+def medic_handles_unreachable_area(display, medic, scenario, state, area):
+    state.unexplored_areas = [
+        candidate
+        for candidate in state.unexplored_areas
+        if candidate.area_id != area.area_id
+    ]
+
+    flow_decision = medic.decide_after_unreachable_area(
+        state.reports,
+        area,
+        state.unexplored_areas,
+        state.explorer_location,
+        scenario,
+    )
+    show_llm_diagnostic(display, flow_decision)
+    display.say(
+        "Medico -> Esploratore (" + provider_label(flow_decision) + ")",
+        flow_decision.reason,
+    )
+
+    if flow_decision.action == "continue_exploration" and state.unexplored_areas:
+        #Nella pending direction dello stato viene caricato un oggetto AreaDirection 
+        #Con all'interno la prossima area decisa dal medico se la precedente è unreachable.
+        state.pending_direction = AreaDirection(
+            flow_decision.next_area_id,
+            flow_decision.reason,
+            flow_decision.provider,
+            flow_decision.model,
+            flow_decision.used_fallback,
+            flow_decision.error,
+        )
+        return True
+
+    return False
+
+
+#Fase 7: se il percorso esiste, l'esploratore arriva nell'area e produce il report
+#Il primo messaggio conferma l'arrivo; il secondo è il vero e proprio report con osservazioni e paziente.
+def explorer_reaches_area_and_reports(display, explorer, state, area):
+    state.explorer_location = area.location
+
+    #Comunico al medico l'arrivo nell'area
+    entry_message = explorer.compose_message(
+        "robot medico",
+        "comunicare che hai raggiunto l'area indicata e che invierai un report",
+        "Area: "
+        + area.area_id
+        + "\nPosizione: "
+        + str(area.location),
+        "Ho raggiunto " + area.area_id + ". Raccolgo osservazioni.",
+    )
+    say_llm_result(display, "Esploratore -> Medico", entry_message)
+
+    #Lancio describe area per descrivere l'area al medico, prompt dedicato nell'oggetto RescueRobot
+    report = explorer.describe_area(area)
+    state.reports.append(report) #Appendo il report di quest'area allo stato.
+    say_llm_result(display, "Esploratore -> Medico", report)
+    return report #Ritorno il report dell'area, report è di tipo ExplorationReport
+
+
+#Fase 8: il medico può fare domande di chiarimento sulla zona appena esplorata.
+#Ogni domanda e risposta viene salvata per il triage finale; se non ci sono
+#domande, il medico conferma solo la ricezione del report.
+def exchange_area_clarifications(display, medic, explorer, scenario, state, area, report):
+    #In request (tipo ClarificationRequest) carco la richiesta
+    request = medic.request_area_clarifications(area, report, scenario)
+    show_llm_diagnostic(display, request) #Serve come al solito per vedere se c'è fallback.
+
+    if not request.questions:
+        ack_message = medic.compose_message(
+            "robot esploratore",
+            "confermare ricezione del report e autorizzare il prossimo spostamento",
+            "Report ricevuto da "
+            + area.area_id
+            + ":\n"
+            + report.text,
+            "Ricevuto. Non ho chiarimenti su questa area, puoi restare pronto al prossimo spostamento.",
+        )
+        say_llm_result(display, "Medico -> Esploratore", ack_message)
+        return
+
+    for question in request.questions:
+        state.asked_questions.append(question)
+        display.say("Medico -> Esploratore (" + provider_label(request) + ")", question)
+
+        answer = explorer.answer_clarification(question, scenario)
+        say_llm_result(display, "Esploratore -> Medico", answer)
+        state.clarification_answers.append(
+            {
+                "question": question,
+                "answer": answer.text,
+            }
+        )
+
+
+#Aggiornamento stato dopo una zona completata.
+#Chiude il ciclo delle fasi 3-8 rimuovendo dall'elenco l'area gia' esplorata.
+def mark_area_as_explored(state, area):
+    remaining_areas = []
+
+    for candidate_area in state.unexplored_areas:
+        if candidate_area.area_id != area.area_id:
+            remaining_areas.append(candidate_area)
+
+    state.unexplored_areas = remaining_areas
+
+#*************************************************************************************
+#***********************************FASE ESPLORATIVA********************************** 
+#*************************************************************************************
+
+#Regola le fasi esplorative alternando i metodi sopra delle fasi 2-8.
+#Il ciclo è composto da: medico sceglie area, PDDL pianifica, esploratore riferisce,
+#medico chiede chiarimenti. In caso di percorso impossibile passa dalle fasi 5-6.
+def run_guided_exploration(display, project_dir, scenario, explorer, medic):
+    display.section("Esplorazione guidata con PDDL")
+    state = ExplorationState(scenario)
+
+    #Medico lancia il messaggio iniziale e apre il canale, non comunica direttamente con l'explorer
+    medic_opens_exploration_channel(display, medic, scenario, state)
+
+    while state.unexplored_areas:
+        direction = medic_selects_next_area(display, medic, scenario, state) #Direction è il messaggio dal medico, da cui estraggo area
         area = find_area_by_id(scenario, direction.area_id)
-        #Il testo è fisso, ma la decisione la prende llm
-        display.say(
-            "Medico (" + provider_label(direction) + ")",
-            "Dirigiti verso "
-            + area.area_id
-            + ". "
-            + direction.reason,
-        )
+        medic_sends_exploration_order(display, direction, area) #Solo visual
 
-        #Genero un problema PDDL dedicato allo spostamento dell'explorer
-        display.section("Planning esploratore: " + area.area_id)
-        exploration_problem_path = generate_exploration_problem(
-            scenario,
-            explorer_location,
-            area.location,
-            project_dir
-            / "output"
-            / ("problem_exploration_" + safe_file_stem(area.area_id) + ".pddl"),
-        )
-        display.system("Problema esplorazione: " + str(exploration_problem_path))
+        try:
+            plan_explorer_route(display, project_dir, scenario, state, area) #Explorer prova direttamente a raggiungere con il planning
+        except PlannerError as exc:
+            #Se c'è un errore l'explorer fa il report cche area, ricevuta da medic, non è raggiungibile
+            explorer_reports_unreachable_area(display, explorer, area, state, exc) #Il messaggio di risposta è generato
+            if medic_handles_unreachable_area(display, medic, scenario, state, area): #Se il medico sceglie di continuare ripeto dall'inizio del while
+                continue
+            break #Se il medico vuole smettere, esco. Esco solo quando il medico lo decide dal while, o quando ho finito le aree da esplorare
 
-        #Se la zona scelta coincide con la posizione attuale, non serve invocare il planner
-        if explorer_location == area.location:
-            display.system("L'esploratore e' gia' nella zona indicata: nessuno spostamento necessario.")
-        else:
-            try:
-                #Fast Downward calcola solo il percorso verso la zona scelta
-                #Lancio run_planner che ho importato
-                plan = run_planner(
-                    project_dir / "pddl" / "domain_rescue.pddl",
-                    exploration_problem_path,
-                    project_dir,
-                )
-            except PlannerError as exc:
-                #Se il percorso non esiste, l'esploratore comunica il blocco
-                blocked_message = explorer.compose_message(
-                    "robot medico",
-                    "comunicare che non riesci a raggiungere la zona indicata",
-                    "Area richiesta: "
-                    + area.area_id
-                    + "\nPartenza: "
-                    + str(explorer_location)
-                    + "\nDestinazione: "
-                    + str(area.location)
-                    + "\nIl planner PDDL non ha prodotto un percorso.\nErrore: "
-                    + str(exc),
-                    "Non riesco a raggiungere "
-                    + area.area_id
-                    + ": il planner PDDL non ha trovato un percorso. Attendo una tua decisione.",
-                )
-                say_llm_result(display, "Esploratore -> Medico", blocked_message)
+        #A questo punto explorer carica il report in report, che è di tipo ExplorationReport
+        report = explorer_reaches_area_and_reports(display, explorer, state, area) #Area è sempre quella ricevuta dal medico
+        #A questo punto parte la fase di domande tra medico ed explorer.
+        exchange_area_clarifications(display, medic, explorer, scenario, state, area, report)
+        #L'area viene segnata come esplorata
+        mark_area_as_explored(state, area)
 
-                unexplored_areas = [
-                    candidate
-                    for candidate in unexplored_areas
-                    if candidate.area_id != area.area_id
-                ]
-                available_areas = unexplored_areas
-                flow_decision = medic.decide_after_unreachable_area(
-                    reports,
-                    area,
-                    available_areas,
-                    explorer_location,
-                    scenario,
-                )
-                show_llm_diagnostic(display, flow_decision)
-                display.say(
-                    "Medico (" + provider_label(flow_decision) + ")",
-                    flow_decision.reason,
-                )
+    return state #Con tutti i report ecc...
 
-                if (
-                    flow_decision.action == "continue_exploration"
-                    and available_areas
-                ):
-                    unexplored_areas = available_areas
-                    pending_direction = AreaDirection(
-                        flow_decision.next_area_id,
-                        flow_decision.reason,
-                        flow_decision.provider,
-                        flow_decision.model,
-                        flow_decision.used_fallback,
-                        flow_decision.error,
-                    )
-                    continue
 
-                break
-
-            #Stampa del piano di movimento dell'esploratore
-            display.system("Planner usato: " + plan.source)
-            display.system("Costo percorso esploratore: " + str(plan.cost))
-            display.line("\nPiano esploratore:")
-            for index, action in enumerate(plan.actions, start=1):
-                display.line(str(index).zfill(2) + ". " + action)
-
-        #Aggiorno la posizione logica dell'esploratore dopo il piano
-        explorer_location = area.location
-
-        #L'esploratore conferma l'arrivo prima di mandare il report vero e proprio
-        entry_message = explorer.compose_message(
-            "robot medico",
-            "comunicare che hai raggiunto l'area indicata e che invierai un report",
-            "Area: "
-            + area.area_id
-            + "\nPosizione: "
-            + str(area.location),
-            "Ho raggiunto " + area.area_id + ". Raccolgo osservazioni.",
-        )
-        say_llm_result(display, "Esploratore", entry_message)
-
-        #Report dall'osservazione area, qui entrano paziente e osservazioni ambientali
-        report = explorer.describe_area(area)
-        reports.append(report)
-
-        say_llm_result(display, "Esploratore -> Medico", report)
-        #Il medico puo' chiedere fino a tre chiarimenti sulla singola area appena vista.
-        area_clarification_request = medic.request_area_clarifications(
-            area,
-            report,
-            scenario,
-        )
-        show_llm_diagnostic(display, area_clarification_request) #Serve per verificare fallback
-        #Ogni domanda viene salvata per alimentare il triage finale
-        if area_clarification_request.questions:
-            for question in area_clarification_request.questions:
-                asked_questions.append(question)
-                display.say("Medico -> Esploratore", question)
-                answer = explorer.answer_clarification(question, scenario)
-                say_llm_result(display, "Esploratore -> Medico", answer)
-                clarification_answers.append(
-                    {
-                        "question": question,
-                        "answer": answer.text,
-                    }
-                )
-        else:
-            #Se non servono chiarimenti, il medico conferma ricezione e si prosegue.
-            ack_message = medic.compose_message(
-                "robot esploratore",
-                "confermare ricezione del report e autorizzare il prossimo spostamento",
-                "Report ricevuto da "
-                + area.area_id
-                + ":\n"
-                + report.text,
-                "Ricevuto. Non ho chiarimenti su questa area, puoi restare pronto al prossimo spostamento.",
-            )
-            say_llm_result(display, "Medico", ack_message)
-
-        #Tolgo dall'elenco la zona appena esplorata.
-        unexplored_areas = [
-            candidate
-            for candidate in unexplored_areas
-            if candidate.area_id != area.area_id
-        ]
-
-    #Fase 6: chiusura esplorazione
-    #A questo punto l'esplorazione è completa oppure il medico ha deciso di chiuderla
+#Metodo utile alla fase 9: calcola quali aree non hanno prodotto report.
+#Serve quando l'esplorazione si chiude prima di visitare tutte le zone. In caso ad esempio di unreachable.
+def missing_report_area_ids(scenario, reports):
     reported_area_ids = []
     for report in reports:
         reported_area_ids.append(report.area_id)
+
     missing_area_ids = []
     for area in scenario.areas:
         if area.area_id not in reported_area_ids:
             missing_area_ids.append(area.area_id)
 
-    #Intent e fallback di compose sotto
-    closing_intent = "comunicare che tutte le zone richieste sono state esplorate"
-    closing_fallback = "Ho completato l'esplorazione di tutte le zone richieste e ho trasmesso i report."
+    return missing_area_ids
+
+
+#Fase 9: chiusura della ricognizione e passaggio al triage.
+#L'esploratore comunica se ha visitato tutte le aree; poi il medico avvisa che
+#usera' report e chiarimenti per scegliere il paziente prioritario.
+def close_exploration_channel(display, explorer, medic, scenario, state):
+    missing_area_ids = missing_report_area_ids(scenario, state.reports) #Controllo quali aree ho mancato.
+
+    closing_intent = "comunicare che tutte le zone richieste sono state esplorate" #Serve per il prompt
+    closing_fallback = "Ho completato l'esplorazione di tutte le zone richieste e ho trasmesso i report." #E' la fallback.
     if missing_area_ids:
-        #Dico al medico che non ho raggiunto tutte le zone ma che ho inviato tutti i report.
-        #Questo va come testo del compose dell'explorer sotto.
         closing_intent = (
             "comunicare che l'esplorazione si chiude con alcune zone non "
             "raggiunte e che hai trasmesso i report disponibili"
         )
-        #Preparo la fallback
         closing_fallback = (
             "Ho concluso l'esplorazione con i report disponibili. Zone senza "
             "report: "
@@ -2152,36 +2229,41 @@ def main():
             + "."
         )
 
-    all_explored_message = explorer.compose_message(
+    closing_message = explorer.compose_message(
         "robot medico",
         closing_intent,
         "Report raccolti: "
-        + str(len(reports))
+        + str(len(state.reports))
         + "\nZone senza report: "
         + (", ".join(missing_area_ids) if missing_area_ids else "nessuna"),
         closing_fallback,
     )
-    say_llm_result(display, "Esploratore -> Medico", all_explored_message)
+    say_llm_result(display, "Esploratore -> Medico", closing_message) #Mostra a video il rissultato.
 
-    #Il medico annuncia che passa dalla raccolta dati alla decisione.
-    final_triage_message = medic.compose_message(
+    #Serve solo a comunicare al robot esploratore che la comunicazione è terminata e che 
+    #Ha raccolto tutte le informaizoni di cui ha bisogno.
+    triage_message = medic.compose_message(
         "robot esploratore",
         "comunicare che ora userai report e risposte per la decisione finale",
-        "Chiarimenti ricevuti: " + str(len(clarification_answers)),
+        "Chiarimenti ricevuti: " + str(len(state.clarification_answers)),
         "Ho ricevuto i chiarimenti. Ora assegno la priorita' finale.",
     )
-    say_llm_result(display, "Medico", final_triage_message)
+    say_llm_result(display, "Medico -> Esploratore", triage_message)
 
-    #Fase 7: triage finale
-    #La decisione usa report, chiarimenti e validatori per produrre una tabella ordinata
+
+#Fase 9: il medico sceglie il paziente prioritario.
+#La decisione usa solo report e chiarimenti raccolti nelle aree raggiunte.
+#Tutto questo è nello state tornato da run_guided_exploration().
+def run_medical_triage(display, medic, scenario, state):
+    #Decisione effettiva del medico
     decision = medic.triage(
-        reports,
-        clarification_answers,
+        state.reports,
+        state.clarification_answers,
         scenario,
-        asked_questions,
+        state.asked_questions,
     )
 
-    #Stampa della decisione e della tabella completa di priorità
+    #Display di organizzazione della CHAT
     display.section("Decisione medica")
     display.say(
         "Medico (" + provider_label(decision) + ")",
@@ -2190,9 +2272,11 @@ def main():
         + ". "
         + decision.explanation,
     )
-    show_llm_diagnostic(display, decision) #In caso di fallback
+    show_llm_diagnostic(display, decision)
 
+    #Mette una riga con le priorità.
     display.line("\nPriorita':")
+    #Prende dalla decision la priority table
     if decision.priority_table:
         for row in decision.priority_table:
             display.line(
@@ -2206,13 +2290,13 @@ def main():
     else:
         display.line("  Nessun paziente osservato nelle aree raggiunte.")
 
-    if not decision.selected_patient_id:
-        display.system(
-            "Nessun paziente selezionabile: non genero il piano operativo finale."
-        )
-        return
+    return decision
 
-    #Fase 8: genero il problema PDDL finale verso il paziente scelto
+
+#Fasi 10 e 11: viene generato il problema PDDL finale e lancio il planner operativo.
+#Il goal contiene paziente scelto e sicurezza dell'area. Il piano finale coinvolge
+#robot medico e soccorritore civile (che è solo nel PDDL).
+def run_final_rescue_planning(display, project_dir, scenario, decision):
     display.section("Aggiornamento PDDL")
     display.say(
         "Sistema",
@@ -2225,8 +2309,6 @@ def main():
     )
     display.system("Problema aggiornato: " + str(problem_path))
 
-    #Fase 9: planning operativo finale
-    #Il piano include eventuale messa in sicurezza prima dell'ingresso del medico
     display.section("Planning con Fast Downward")
     try:
         fast_downward_path = project_dir / "fast-downward-24.06.1" / "fast-downward.py"
@@ -2238,18 +2320,45 @@ def main():
             project_dir,
         )
     except PlannerError as exc:
-        #Errore esplicito: senza piano finale non viene simulato alcun intervento.
         display.system("Errore planning:")
         display.line(str(exc))
         return
 
-    #Output conclusivo del planner: fonte, costo e azioni ordinate
-    display.system("Planner usato: " + plan.source)
-    display.system("Costo stimato: " + str(plan.cost))
-    display.line("\nPiano generato:")
-    for index, action in enumerate(plan.actions, start=1):
-        display.line(str(index).zfill(2) + ". " + action)
+    print_plan(display, "stimato", "generato", plan)
 
+
+#CORPO DELLA COMUNICAZIONE
+def main():
+    #Fase 1: carico ambiente, .env e scenario.
+    project_dir = Path(__file__).resolve().parent
+    env_path = project_dir / ".env"
+    env_loaded = load_dotenv(env_path)
+    scenario = load_default_scenario(project_dir)
+    display = Display()
+
+    display.section("Avvio intervento")
+    display.system(scenario.name)
+    display.system(".env caricato: " + (str(env_path) if env_loaded else "non trovato"))
+    #Creo gli agenti
+    explorer, medic = build_rescue_robots(display)
+
+    #Fasi 2-8: il medico guida l'esploratore e raccoglie report e chiarimenti.
+    #Apertura canale di esplorazione
+    state = run_guided_exploration(display, project_dir, scenario, explorer, medic)
+
+    #Fase 9: chiudo canale di esplorazione e faccio
+    close_exploration_channel(display, explorer, medic, scenario, state)
+    #Faccio il run del triage e salvo la decision (in realtà è già stata stampata ma mi serve per generare o meno il PDDL finale)
+    decision = run_medical_triage(display, medic, scenario, state)
+
+    if not decision.selected_patient_id:
+        display.system(
+            "Nessun paziente selezionabile: non genero il piano operativo finale."
+        )
+        return
+
+    #Fasi 10-11: genero il problema PDDL finale e chiudo
+    run_final_rescue_planning(display, project_dir, scenario, decision)
 
 if __name__ == "__main__":
     main()
