@@ -69,7 +69,7 @@ class Display:
     def system(self, text):
         self.say("Sistema", text)
 
-    #Stampo un messaggio detto da attore. Attore e' il mittente e text e' il messaggio.
+    #Stampo un messaggio detto da attore. Attore è il mittente e text è il messaggio.
     def say(self, actor, text):
         sys.stdout.write(f"\n[{actor}] ")
         sys.stdout.flush()
@@ -82,7 +82,7 @@ class Display:
 
     #Stampa il testo passato. Di def. vado a capo.
     def line(self, text="", end="\n"):
-        #Se fast mode e' True scrivo direttamente il messaggio e faccio return
+        #Se fast mode è True scrivo direttamente il messaggio e faccio return
         if self.fast_mode:
             sys.stdout.write(text)
             sys.stdout.write(end)
@@ -95,7 +95,7 @@ class Display:
             sys.stdout.flush()
             time.sleep(self.char_delay)
 
-        #Alla fine vado a capo se end e' \n, come di default.
+        #Alla fine vado a capo se end è \n, come di default.
         sys.stdout.write(end)
         sys.stdout.flush()
 
@@ -108,7 +108,7 @@ class ExplorationReport:
         self.text = text                        #Descrizione text generata dall'esploratore
         self.provider = provider                #Servizio/provider LLM usato
         self.model = model                      #Nome del modello usato per generare il testo
-        self.used_fallback = used_fallback      #True se e' stata usata la descrizione di fallback
+        self.used_fallback = used_fallback      #True se è stata usata la descrizione di fallback
         self.error = error                      #Eventuale errore avvenuto durante la generazione
 
 
@@ -118,7 +118,7 @@ class ClarificationRequest:
         self.questions = questions              #Domande formulate dal medico prima della scelta
         self.provider = provider                #Provider LLM usato per generare le domande
         self.model = model                      #Nome del modello usato
-        self.used_fallback = used_fallback      #True se e' stato usato il fallback locale
+        self.used_fallback = used_fallback      #True se è stato usato il fallback locale
         self.error = error                      #Eventuale errore avvenuto durante generazione/validazione
 
 
@@ -129,7 +129,7 @@ class AreaDirection:
         self.reason = reason                    #Motivo della direzione data dal medico
         self.provider = provider                #Provider LLM usato per scegliere la prossima area
         self.model = model                      #Nome del modello usato
-        self.used_fallback = used_fallback      #True se e' stata usata la fallback
+        self.used_fallback = used_fallback      #True se è stata usata la fallback
         self.error = error                      #Eventuale errore avvenuto durante generazione/validazione
 
 
@@ -141,20 +141,20 @@ class ExplorationFlowDecision:
         self.reason = reason                    #Motivo operativo della scelta
         self.provider = provider                #Provider LLM usato
         self.model = model                      #Nome del modello usato
-        self.used_fallback = used_fallback      #True se e' stata usata la fallback
+        self.used_fallback = used_fallback      #True se è stata usata la fallback
         self.error = error                      #Eventuale errore avvenuto durante generazione/validazione
 
 
 #Classe decisione triage
 class TriageDecision:
     def __init__(self, selected_patient_id, priority_table, clarification_questions, explanation, provider, model, used_fallback, error=None):
-        self.selected_patient_id = selected_patient_id          #Id paziente scelto come piu' urgente
-        self.priority_table = priority_table                    #Lista ordinata delle priorita' dei pazienti
+        self.selected_patient_id = selected_patient_id          #Id paziente scelto come più urgente
+        self.priority_table = priority_table                    #Lista ordinata delle priorità dei pazienti
         self.clarification_questions = clarification_questions  #Domande usate prima della decisione finale
         self.explanation = explanation                          #Spiegazione della scelta fatta dal robot medico
         self.provider = provider                                #Provider LLM usato
         self.model = model                                      #Nome del modello usato per generare la decisione
-        self.used_fallback = used_fallback                      #True se e' stata usata la fallback
+        self.used_fallback = used_fallback                      #True se è stata usata la fallback
         self.error = error                                      #Eventuale errore avvenuto durante generazione/validazione
 
 
@@ -174,7 +174,7 @@ class ExplorationState:
 
 class RescueRobot:
     #Classe generica che rappresenta un robot della simulazione.
-    #Puo' comportarsi come esploratore o come medico, in base ai metodi usati.
+    #Può comportarsi come esploratore o come medico, in base ai metodi usati.
 
     #Costruttore
     def __init__(self, llm, role_name):
@@ -189,7 +189,7 @@ class RescueRobot:
             + self.role_name #Ruolo del robot che parla
             + " in una simulazione di recupero sotto macerie. "
             "Scrivi in italiano un solo messaggio diretto al "
-            + recipient #Specifica a chi e' diretto il messaggio.
+            + recipient #Specifica a chi è diretto il messaggio.
             + ". "
             "Poche frasi, tono operativo, nessun markdown. " #Limitato per cercare di ridurre consumo di Token
             "Usa solo i dati nel contesto e non inventare dettagli.\n\n" #NON utilizzare informazioni inventate
@@ -203,7 +203,7 @@ class RescueRobot:
 
     #Metodo usato dal robot esploratore per descrivere un'area.
     def describe_area(self, area):
-        patient_text = "Nessun paziente visibile." #Testo di default se nell'area non e' presente alcun paziente.
+        patient_text = "Nessun paziente visibile." #Testo di default se nell'area non è presente alcun paziente.
         if area.patient is not None:
             patient_text = (
                 "Paziente "
@@ -229,8 +229,8 @@ class RescueRobot:
         prompt = (
             "Sei un robot esploratore in un edificio crollato. "
             "Descrivi in italiano solo quello che osservi nell'area. "
-            "Non fare diagnosi e non scegliere il paziente piu' grave. "
-            "Rendi la descrizione naturale, pero': niente cause, oggetti, "
+            "Non fare diagnosi e non scegliere il paziente più grave. "
+            "Rendi la descrizione naturale, però: niente cause, oggetti, "
             "persone, sintomi o pericoli inventati. Usa solo questi dati.\n\n"
             "Area: "
             + area.area_id
@@ -299,7 +299,18 @@ class RescueRobot:
         )
 
     #Metodo usato dal medico per scegliere la prossima area da esplorare.
-    def choose_next_area(self, reports, unexplored_areas, current_location, scenario):
+    def choose_next_area(
+        self,
+        reports,
+        unexplored_areas,
+        current_location,
+        scenario,
+        asked_questions=None,
+        clarification_answers=None,
+    ):
+        asked_questions = asked_questions or []
+        clarification_answers = clarification_answers or []
+
         local_direction = make_local_area_direction(
             scenario,
             unexplored_areas,
@@ -308,19 +319,26 @@ class RescueRobot:
         report_text = reports_to_text(reports)
         if not report_text.strip():
             report_text = "Nessun report ancora disponibile.\n"
+        asked_questions_text = asked_questions_to_text(asked_questions)
+        clarification_text = clarifications_to_text(clarification_answers)
 
         prompt = (
             "Sei un robot medico che guida un robot esploratore sotto macerie. "
             "Devi scegliere una sola prossima area da far raggiungere "
-            "all'esploratore. Usa i report gia' ricevuti e la posizione attuale. "
+            "all'esploratore. Usa i report già ricevuti, le domande di chiarimento, "
+            "le risposte ottenute e la posizione attuale. "
             "Non scegliere il paziente prioritario e non pianificare tu il "
-            "percorso: il percorso verra' calcolato da PDDL dopo questa scelta.\n\n"
+            "percorso: il percorso verrà calcolato da PDDL dopo questa scelta.\n\n"
             "Posizione attuale esploratore: "
             + str(current_location)
             + "\nAree non ancora esplorate:\n"
             + area_options_to_text(unexplored_areas)
-            + "\nReport gia' ricevuti:\n"
+            + "\nReport già ricevuti:\n"
             + report_text
+            + "\nDomande di chiarimento già formulate:\n"
+            + asked_questions_text
+            + "\nRisposte ai chiarimenti già ricevute:\n"
+            + clarification_text
             + "\nRispondi solo con questo JSON valido:\n"
             + "{\n"
             + '  "next_area_id": "uno degli id area non ancora esplorati",\n'
@@ -352,7 +370,7 @@ class RescueRobot:
             error,
         )
 
-    #Metodo usato dal medico quando una stanza scelta non e' raggiungibile.
+    #Metodo usato dal medico quando una stanza scelta non è raggiungibile.
     def decide_after_unreachable_area(self, reports, unreachable_area, available_areas, current_location, scenario):
         local_decision = make_local_unreachable_decision(
             unreachable_area,
@@ -369,7 +387,7 @@ class RescueRobot:
 
         prompt = (
             "Sei un robot medico che guida un robot esploratore sotto macerie. "
-            "L'esploratore ti ha comunicato che una stanza richiesta non e' "
+            "L'esploratore ti ha comunicato che una stanza richiesta non è "
             "raggiungibile secondo il planner PDDL. Devi scegliere se "
             "terminare l'esplorazione e passare alla decisione finale oppure, "
             "solo se esiste una location alternativa non ancora esplorata, continuare "
@@ -381,7 +399,7 @@ class RescueRobot:
             + area_to_text(unreachable_area, scenario)
             + "\nLocation alternative non esplorate:\n"
             + available_text
-            + "\nReport gia' ricevuti:\n"
+            + "\nReport già ricevuti:\n"
             + report_text
             + "\nRispondi solo con questo JSON valido:\n"
             + "{\n"
@@ -427,7 +445,7 @@ class RescueRobot:
             "Sei un robot medico in una simulazione di recupero sotto macerie. "
             "Hai appena ricevuto il report di una singola area. Decidi se servono "
             "domande di chiarimento prima di mandare avanti l'esploratore. "
-            "Se il report e' sufficiente, restituisci una lista vuota. Non "
+            "Se il report è sufficiente, restituisci una lista vuota. Non "
             "scegliere ancora il paziente prioritario e non chiedere percorsi.\n\n"
             "Area appena esplorata:\n"
             + area_to_text(area, scenario)
@@ -471,7 +489,7 @@ class RescueRobot:
         patient_text = patients_to_text(decision_scenario) #Riepilogo pazienti osservati e ambiente.
         if not patient_text.strip():
             patient_text = "Nessun paziente osservato nelle aree raggiunte.\n"
-        clarification_text = clarifications_to_text(clarification_answers) #Domande e risposte gia' ottenute.
+        clarification_text = clarifications_to_text(clarification_answers) #Domande e risposte già ottenute.
 
         #Costruzione del prompt per la decisione finale.
         prompt = (
@@ -479,7 +497,7 @@ class RescueRobot:
             "Ora devi decidere quale paziente raggiungere per primo. La decisione "
             "deve usare davvero sia i report iniziali sia le risposte alle domande "
             "di chiarimento. Le risposte dell'esploratore sono evidenze osservate "
-            "e devono comparire nella motivazione se incidono sulla priorita'. "
+            "e devono comparire nella motivazione se incidono sulla priorità. "
             "Puoi includere nella decisione solo i pazienti presenti nelle aree "
             "raggiunte dall'esploratore e quindi descritti nei report. "
             "Non scegliere percorsi: il percorso e la stabilizzazione ambientale "
@@ -490,7 +508,7 @@ class RescueRobot:
             + report_text
             + "\nChiarimenti ottenuti prima della decisione:\n"
             + clarification_text
-            + "\nStabilisci tu le regole di priorita' in base a cosa pensi sia "
+            + "\nStabilisci tu le regole di priorità in base a cosa pensi sia "
             "giusto interpretando il ruolo di un medico.\n"
             + "\nRispondi solo con questo JSON valido:\n"
             + "{\n"
@@ -501,7 +519,7 @@ class RescueRobot:
             + "}\n\n"
             + "Vincoli: usa solo gli id paziente osservati nelle aree raggiunte, "
             + "includi tutti e soli questi pazienti una sola volta nella "
-            "priority_table e assegna priority 1 al paziente piu' urgente. Il "
+            "priority_table e assegna priority 1 al paziente più urgente. Il "
             "campo selected_patient_id deve essere identico al patient_id della "
             "riga con priority 1. La priority_table deve avere "
             + "esattamente "
@@ -517,7 +535,7 @@ class RescueRobot:
         # - pazienti esistenti
         # - tutti i pazienti presenti
         # - numero corretto di righe
-        # - priorita' corrette
+        # - priorità corrette
         data, validation_error = validate_triage_decision(
             data,
             decision_scenario,
@@ -537,25 +555,25 @@ class RescueRobot:
                 repair_data = json.loads(repaired.text) #Conversione
                 #Validazione numero 2
                 repair_data, validation_error = validate_triage_decision( repair_data,decision_scenario,local_decision)
-                #Se la decisione riparata e' valida, controlla di nuovo la coerenza.
+                #Se la decisione riparata è valida, controlla di nuovo la coerenza.
                 if not validation_error:
                     repair_consistency_error = find_triage_consistency_error(repair_data,decision_scenario)
-                    #Se durante la riparazione e' stato usato il fallback,
+                    #Se durante la riparazione è stato usato il fallback,
                     if repaired.used_fallback:
                         data["explanation"] = build_consistent_triage_explanation(data)
                         #Ricostruisce una spiegazione coerente con la decisione attuale.
                     elif repair_consistency_error:
-                        #Se la riparazione e' ancora incoerente, non usa repair_data come nuova decisione.
+                        #Se la riparazione è ancora incoerente, non usa repair_data come nuova decisione.
                         data["explanation"] = build_consistent_triage_explanation(data)
                         #Ricostruisce solo la spiegazione della decisione originale.
                     else:
-                        #Se la riparazione e' valida e coerente,
+                        #Se la riparazione è valida e coerente,
                         #sostituisce la decisione originale con quella riparata.
                         data = repair_data
                         used_fallback = repaired.used_fallback
                         error = repaired.error
                 else:
-                    #Se la decisione riparata non e' valida, mantiene la decisione precedente.
+                    #Se la decisione riparata non è valida, mantiene la decisione precedente.
                     data["explanation"] = build_consistent_triage_explanation(data)
                     validation_error = None #Annulla l'errore di validazione della riparazione.
 
@@ -585,11 +603,11 @@ class RescueRobot:
         prompt = (
             "Sei un robot medico. Hai prodotto una decisione di triage in JSON, "
             "ma contiene questa incoerenza: "
-            + issue #Specifica qual e' il problema trovato nella decisione precedente.
+            + issue #Specifica qual è il problema trovato nella decisione precedente.
             + "\n\nCorreggi la decisione usando solo i dati osservati. "
             "Non inventare segni o osservazioni. La spiegazione deve essere "
             "coerente con selected_patient_id e con la riga priority 1. "
-            "Mantieni il piu' possibile la scelta e l'ordine gia' dati, ma "
+            "Mantieni il più possibile la scelta e l'ordine già dati, ma "
             "correggi qualunque contraddizione.\n\n"
             "Scenario osservato:\n"
             + scenario_to_text(scenario)
@@ -618,7 +636,7 @@ class RescueRobot:
             "Sei un robot esploratore in un edificio crollato. Rispondi in italiano "
             "alla domanda del robot medico usando solo i dati osservati nello "
             "scenario. Non inventare nuovi sintomi, diagnosi o dettagli ambientali. "
-            "Se la domanda non e' verificabile dai dati, dillo chiaramente.\n\n"
+            "Se la domanda non è verificabile dai dati, dillo chiaramente.\n\n"
             "Domanda del medico: "
             + question
             + "\n\nScenario osservato:\n"
@@ -634,7 +652,7 @@ def load_scenario(path):
     with Path(path).open("r", encoding="utf-8") as file:
         data = json.load(file)
 
-    #Inizializzo la lista vuota, diventera' una lista di RescueArea
+    #Inizializzo la lista vuota, diventerà una lista di RescueArea
     #Area è vuota inizialmente e poi viene popolata
     areas = []
     area_items = data["areas"]
@@ -725,7 +743,7 @@ def find_patient_by_id(scenario, patient_id):
 
 #Imposto la label per il display del risultato
 def provider_label(result):
-    #Se l'indicatore di uso fallback e' True, allora concateno provider + fallback per sapere che non e' stato usato llm
+    #Se l'indicatore di uso fallback è True, allora concateno provider + fallback per sapere che non è stato usato llm
     if result.used_fallback:
         return result.provider + " fallback"
     #Ritorno il nome provider
@@ -766,7 +784,7 @@ def scenario_to_text(scenario):
             + "; osservazioni="
             + str(area.observations)
         )
-        #Controlla se nell'area e' presente un paziente
+        #Controlla se nell'area è presente un paziente
         if area.patient is not None:
             line += (
                 "; paziente="
@@ -814,6 +832,15 @@ def clarifications_to_text(clarification_answers):
     for exchange in clarification_answers:
         text += "- Domanda: " + exchange["question"] + "\n"
         text += "  Risposta: " + exchange["answer"] + "\n"
+    return text
+#Converte le domande già formulate in testo compatto
+def asked_questions_to_text(asked_questions):
+    if not asked_questions:
+        return "Nessuna domanda di chiarimento ancora formulata.\n"
+
+    text = ""
+    for question in asked_questions:
+        text += "- " + question + "\n"
     return text
 #Formato singola area per prompt e chiarimenti
 def area_to_text(area, scenario):
@@ -879,7 +906,7 @@ def manhattan_distance(first, second):
     #Distanza su griglia ortogonale: non considera diagonali.
     return abs(first[0] - second[0]) + abs(first[1] - second[1])
 #Fallback: se il medico LLM non risponde.
-#esploro la zona piu' vicina in termini di distanza manhattan nella griglia.
+#esploro la zona più vicina in termini di distanza manhattan nella griglia.
 def make_local_area_direction(scenario, unexplored_areas, current_location):
     nearest_area = None
     nearest_distance = None
@@ -899,7 +926,7 @@ def make_local_area_direction(scenario, unexplored_areas, current_location):
     return {
         "next_area_id": nearest_area.area_id,
         "reason": (
-            "Fallback locale: scelgo l'area non esplorata piu' vicina alla "
+            "Fallback locale: scelgo l'area non esplorata più vicina alla "
             "posizione attuale dell'esploratore."
         ),
     }
@@ -915,7 +942,7 @@ def validate_area_direction(data, unexplored_areas, local_direction):
 
     area_id = data.get("next_area_id")
     if area_id not in valid_area_ids:
-        return local_direction, "Direzione LLM non valida: area assente o gia' esplorata."
+        return local_direction, "Direzione LLM non valida: area assente o già esplorata."
 
     reason = str(data.get("reason", "")).strip()
     if not reason:
@@ -943,7 +970,7 @@ def make_local_unreachable_decision(unreachable_area, available_areas, current_l
             "reason": (
                 "La stanza "
                 + unreachable_area.area_id
-                + " non e' raggiungibile e non risultano altre location "
+                + " non è raggiungibile e non risultano altre location "
                 "non esplorate. Passo alla decisione finale con i dati disponibili."
             ),
         }
@@ -955,8 +982,8 @@ def make_local_unreachable_decision(unreachable_area, available_areas, current_l
         "reason": (
             "La stanza "
             + unreachable_area.area_id
-            + " non e' raggiungibile. Continuo verso la location alternativa "
-            "non esplorata piu' vicina."
+            + " non è raggiungibile. Continuo verso la location alternativa "
+            "non esplorata più vicina."
         ),
     }
 
@@ -1032,7 +1059,7 @@ def validate_unreachable_decision(data, available_areas, local_decision):
         "reason": reason or "Continuo verso una location alternativa raggiungibile.",
     }, None
 
-#Domande minime che il medico puo' fare subito dopo il report di una zona.
+#Domande minime che il medico può fare subito dopo il report di una zona.
 #Si utilizza solo ed unicamente come FALLBACK.
 def make_local_area_clarification_request(area, scenario):
     questions = []
@@ -1101,7 +1128,7 @@ def make_local_clarification_request(scenario):
     return {
         "clarification_questions": make_local_clarification_questions(scenario)
     }
-#Crea domande locali senza decidere prima la priorita'.
+#Crea domande locali senza decidere prima la priorità.
 def make_local_clarification_questions(scenario):
     questions = []
 
@@ -1117,7 +1144,7 @@ def make_local_clarification_questions(scenario):
                 + "?"
             )
 
-    #Chiede conferma delle aree instabili perche' possono incidere sulla gestione.
+    #Chiede conferma delle aree instabili perchè possono incidere sulla gestione.
     for area in scenario.areas:
         if area.location in scenario.unsafe_cells and area.patient is not None:
             questions.append(
@@ -1129,7 +1156,7 @@ def make_local_clarification_questions(scenario):
             )
 
     return questions[:5]
-#Calcola un bonus se le risposte confermano segni o rischi gia' osservati.
+#Calcola un bonus se le risposte confermano segni o rischi già osservati.
 def score_clarification_evidence(scenario, patient, area, clarification_answers):
     bonus = 0
     patient_marker = patient.patient_id.lower()
@@ -1193,12 +1220,12 @@ def make_local_triage(scenario, clarification_answers=None):
             "priority_table": [],
             "clarification_questions": [],
             "explanation": (
-                "Nessun paziente e' stato osservato nelle aree raggiunte: "
-                "non posso assegnare una priorita' medica."
+                "Nessun paziente è stato osservato nelle aree raggiunte: "
+                "non posso assegnare una priorità medica."
             ),
         }
 
-    #Faccio una tabella di priorita'. Inizializzo la lista vuota
+    #Faccio una tabella di priorità. Inizializzo la lista vuota
     priority_table = []
     for index, item in enumerate(scored_patients, start=1):
         score = item[0]
@@ -1227,7 +1254,7 @@ def make_local_triage(scenario, clarification_answers=None):
         "priority_table": priority_table,
         "clarification_questions": make_local_clarification_questions(scenario),
         "explanation": (
-            "Fallback locale: sceglie il paziente con lo score piu' alto dopo "
+            "Fallback locale: sceglie il paziente con lo score più alto dopo "
             "aver integrato le risposte di chiarimento disponibili."
         ),
     }
@@ -1271,12 +1298,12 @@ def validate_triage_decision(data, scenario, local_decision):
     if not isinstance(table, list):
         return local_decision, "Decisione LLM non valida: priority_table mancante."
 
-    #Ricostruisce una tabella pulita: id paziente, priorita' numerica e motivo.
+    #Ricostruisce una tabella pulita: id paziente, priorità numerica e motivo.
     normalized_table = []
     seen_patients = set()
     for item in table:
         if not isinstance(item, dict):
-            return local_decision, "Decisione LLM non valida: riga priorita' non oggetto."
+            return local_decision, "Decisione LLM non valida: riga priorità non oggetto."
 
         item = normalize_triage_row_keys(item)
         patient_id = normalize_patient_id(item.get("patient_id"), patient_ids)
@@ -1303,7 +1330,7 @@ def validate_triage_decision(data, scenario, local_decision):
             }
         )
 
-    #Riordino in base alla priorita' dichiarata dal modello.
+    #Riordino in base alla priorità dichiarata dal modello.
     normalized_table.sort(key=lambda item: item["priority"])
     missing_patient_ids = []
     for patient_id in patient_ids:
@@ -1330,7 +1357,7 @@ def validate_triage_decision(data, scenario, local_decision):
     if selected_patient_id not in patient_ids:
         selected_patient_id = normalized_table[0]["patient_id"]
 
-    #Il paziente selezionato deve coincidere con la riga di priorita' 1.
+    #Il paziente selezionato deve coincidere con la riga di priorità 1.
     if normalized_table[0]["patient_id"] != selected_patient_id:
         selected_patient_id = normalized_table[0]["patient_id"]
 
@@ -1479,7 +1506,7 @@ def find_triage_consistency_error(data, scenario):
         #Cerca se nella frase sono indicati come urgenti altri pazienti
         if sentence_mentions_more_urgent_patient(sentence,selected_patient_id,patient_ids):
             return (
-                "La spiegazione indica come piu' urgente un paziente diverso "
+                "La spiegazione indica come più urgente un paziente diverso "
                 "da selected_patient_id."
             )
         #Cerca se il paziente selezionato nella sua frase ha un low priority marker
@@ -1506,17 +1533,17 @@ def build_consistent_triage_explanation(data):
 
     if first_reason:
         return (
-            "La priorita' resta a "
+            "La priorità resta a "
             + selected_patient_id
-            + " perche' la tabella di triage lo colloca al primo posto: "
+            + " perchè la tabella di triage lo colloca al primo posto: "
             + first_reason
             + "."
         )
 
     return (
-        "La priorita' resta a "
+        "La priorità resta a "
         + selected_patient_id
-        + " perche' e' il paziente al primo posto nella tabella di triage."
+        + " perchè è il paziente al primo posto nella tabella di triage."
     )
 
 #Normalizzazione confronti testuali senza dipendere dagli accenti.
@@ -1558,7 +1585,7 @@ def has_higher_priority_marker(sentence):
     
     markers = [
         "piu urgente",
-        "piu' urgente",
+        "più urgente",
         "prioritario",
         "prioritaria",
         "massima urgenza",
@@ -1685,9 +1712,9 @@ def make_local_clarification_answer(question, scenario):
                 + ". "
             )
             if area.location in scenario.unsafe_cells:
-                answer += "L'area e' segnata come non sicura per l'ingresso del medico."
+                answer += "L'area è segnata come non sicura per l'ingresso del medico."
             else:
-                answer += "L'area non e' marcata come instabile per il medico."
+                answer += "L'area non è marcata come instabile per il medico."
             return answer
 
     return "Non ho un nuovo dato certo. Posso confermare solo lo scenario osservato."
@@ -1719,7 +1746,7 @@ def adjacent_pairs(scenario):
 
     return pairs
 
-#Controlla se una coppia di celle e' un varco ostruito da macerie. First e second devono essere tuple.
+#Controlla se una coppia di celle è un varco ostruito da macerie. First e second devono essere tuple.
 def is_rubble_gate(scenario, first, second):
     return normalize_rubble(first, second) in scenario.rubble_gates
 def safe_file_stem(text):
@@ -1779,8 +1806,8 @@ def generate_exploration_problem(scenario, start_location, target_location, outp
     #Il testo PDDL viene scritto come stringa per restare leggibile e ispezionabile.
     content = """(define (problem rubble_exploration_generated)
   ; Problema generato per un singolo spostamento del robot esploratore.
-  ; Il goal e' raggiungere la zona indicata dal medico.
-  ; L'esploratore puo' liberare varchi ostruiti, ma non mette in sicurezza aree.
+  ; Il goal è raggiungere la zona indicata dal medico.
+  ; L'esploratore può liberare varchi ostruiti, ma non mette in sicurezza aree.
 
   (:domain rubble_rescue)
 
@@ -1829,7 +1856,7 @@ def generate_problem(scenario, selected_patient_id, output_path):
     rubble_lines = []
     secured_lines = []
 
-    #Ogni adiacenza e' un collegamento fisico; non tutte sono gia' libere.
+    #Ogni adiacenza è un collegamento fisico; non tutte sono già libere.
     for pair in adjacent_pairs(scenario):
         first = pair[0]
         second = pair[1]
@@ -1858,14 +1885,14 @@ def generate_problem(scenario, selected_patient_id, output_path):
                 + ")"
             )
 
-    #Le celle non rischiose sono gia' sicure per il medico.
+    #Le celle non rischiose sono già sicure per il medico.
     for cell in free_cells(scenario):
         if cell not in scenario.unsafe_cells:
             secured_lines.append("    (secured " + location_name(cell) + ")")
 
     content = """(define (problem rescue_generated)
   ; Problema generato dal main dopo la scelta del paziente da parte del medico.
-  ; Il medico puo' intervenire quando l'area del paziente e' in sicurezza.
+  ; Il medico può intervenire quando l'area del paziente è in sicurezza.
 
   (:domain rubble_rescue)
 
@@ -1952,7 +1979,7 @@ def medic_opens_exploration_channel(display, medic, scenario, state):
         + str(state.explorer_location)
         + "\nAree da esplorare: "
         + ", ".join([area.area_id for area in scenario.areas]),
-        "Ti guidero' zona per zona. Ogni spostamento verra' pianificato con PDDL.",
+        "Ti guiderò zona per zona. Ogni spostamento verrà pianificato con PDDL.",
     )
     say_llm_result(display, "Medico -> Esploratore", opening)
 
@@ -1971,6 +1998,8 @@ def medic_selects_next_area(display, medic, scenario, state):
             state.unexplored_areas,
             state.explorer_location,
             scenario,
+            state.asked_questions,
+            state.clarification_answers,
         )
 
     show_llm_diagnostic(display, direction)
@@ -2013,9 +2042,9 @@ def plan_explorer_route(display, project_dir, scenario, state, area):
     )
     display.system("Problema esplorazione: " + str(exploration_problem_path))
 
-    #Se l'esploratore e' gia' nella zona scelta, la fase 4 non deve invocare Fast Downward.
+    #Se l'esploratore è già nella zona scelta, la fase 4 non deve invocare Fast Downward.
     if state.explorer_location == area.location:
-        display.system("L'esploratore e' gia' nella zona indicata: nessuno spostamento necessario.")
+        display.system("L'esploratore è già nella zona indicata: nessuno spostamento necessario.")
         return
 
     plan = run_planner(
@@ -2050,40 +2079,44 @@ def explorer_reports_unreachable_area(display, explorer, area, state, error):
 #Fase 6: il medico decide cosa fare dopo una zona irraggiungibile.
 #Può chiudere la ricognizione e passare al triage, oppure scegliere un'altra
 #area ancora disponibile. In quel caso salvo la scelta in pending_direction.
-def medic_handles_unreachable_area(display, medic, scenario, state, area):
-    state.unexplored_areas = [
-        candidate
-        for candidate in state.unexplored_areas
-        if candidate.area_id != area.area_id
-    ]
+def medic_handles_unreachable_area(display, medic, scenario, state, unreachable_area):
+    #Questo serve per eliminare la zona irraggiungibile da state unexp
+    updated_unexplored_areas = []
+    for area in state.unexplored_areas:
+        if area.area_id != unreachable_area.area_id:
+            updated_unexplored_areas.append(area)
+    state.unexplored_areas = updated_unexplored_areas
 
+    #Manda il prompt per far prendere una decisione al medico su cosa fare.
     flow_decision = medic.decide_after_unreachable_area(
         state.reports,
-        area,
+        unreachable_area,
         state.unexplored_areas,
         state.explorer_location,
         scenario,
     )
+
     show_llm_diagnostic(display, flow_decision)
-    display.say(
-        "Medico -> Esploratore (" + provider_label(flow_decision) + ")",
+
+    message_title = "Medico -> Esploratore (" + provider_label(flow_decision) + ")"
+    display.say(message_title, flow_decision.reason)
+
+    if flow_decision.action != "continue_exploration":
+        return False
+
+    if not state.unexplored_areas:
+        return False
+
+    state.pending_direction = AreaDirection(
+        flow_decision.next_area_id,
         flow_decision.reason,
+        flow_decision.provider,
+        flow_decision.model,
+        flow_decision.used_fallback,
+        flow_decision.error,
     )
 
-    if flow_decision.action == "continue_exploration" and state.unexplored_areas:
-        #Nella pending direction dello stato viene caricato un oggetto AreaDirection 
-        #Con all'interno la prossima area decisa dal medico se la precedente è unreachable.
-        state.pending_direction = AreaDirection(
-            flow_decision.next_area_id,
-            flow_decision.reason,
-            flow_decision.provider,
-            flow_decision.model,
-            flow_decision.used_fallback,
-            flow_decision.error,
-        )
-        return True
-
-    return False
+    return True
 
 
 #Fase 7: se il percorso esiste, l'esploratore arriva nell'area e produce il report
@@ -2146,7 +2179,7 @@ def exchange_area_clarifications(display, medic, explorer, scenario, state, area
 
 
 #Aggiornamento stato dopo una zona completata.
-#Chiude il ciclo delle fasi 3-8 rimuovendo dall'elenco l'area gia' esplorata.
+#Chiude il ciclo delle fasi 3-8 rimuovendo dall'elenco l'area già esplorata.
 def mark_area_as_explored(state, area):
     remaining_areas = []
 
@@ -2165,7 +2198,7 @@ def mark_area_as_explored(state, area):
 #medico chiede chiarimenti. In caso di percorso impossibile passa dalle fasi 5-6.
 def run_guided_exploration(display, project_dir, scenario, explorer, medic):
     display.section("Esplorazione guidata con PDDL")
-    state = ExplorationState(scenario)
+    state = ExplorationState(scenario) #Classe dove 
 
     #Medico lancia il messaggio iniziale e apre il canale, non comunica direttamente con l'explorer
     medic_opens_exploration_channel(display, medic, scenario, state)
@@ -2181,6 +2214,7 @@ def run_guided_exploration(display, project_dir, scenario, explorer, medic):
             #Se c'è un errore l'explorer fa il report cche area, ricevuta da medic, non è raggiungibile
             explorer_reports_unreachable_area(display, explorer, area, state, exc) #Il messaggio di risposta è generato
             if medic_handles_unreachable_area(display, medic, scenario, state, area): #Se il medico sceglie di continuare ripeto dall'inizio del while
+                                                                                      #Area viene passata come unreachable_area
                 continue
             break #Se il medico vuole smettere, esco. Esco solo quando il medico lo decide dal while, o quando ho finito le aree da esplorare
 
@@ -2189,7 +2223,7 @@ def run_guided_exploration(display, project_dir, scenario, explorer, medic):
         #A questo punto parte la fase di domande tra medico ed explorer.
         exchange_area_clarifications(display, medic, explorer, scenario, state, area, report)
         #L'area viene segnata come esplorata
-        mark_area_as_explored(state, area)
+        mark_area_as_explored(state, area) #Per eliminare la zona
 
     return state #Con tutti i report ecc...
 
@@ -2211,12 +2245,12 @@ def missing_report_area_ids(scenario, reports):
 
 #Fase 9: chiusura della ricognizione e passaggio al triage.
 #L'esploratore comunica se ha visitato tutte le aree; poi il medico avvisa che
-#usera' report e chiarimenti per scegliere il paziente prioritario.
+#userà report e chiarimenti per scegliere il paziente prioritario.
 def close_exploration_channel(display, explorer, medic, scenario, state):
     missing_area_ids = missing_report_area_ids(scenario, state.reports) #Controllo quali aree ho mancato.
 
     closing_intent = "comunicare che tutte le zone richieste sono state esplorate" #Serve per il prompt
-    closing_fallback = "Ho completato l'esplorazione di tutte le zone richieste e ho trasmesso i report." #E' la fallback.
+    closing_fallback = "Ho completato l'esplorazione di tutte le zone richieste e ho trasmesso i report." #è la fallback.
     if missing_area_ids:
         closing_intent = (
             "comunicare che l'esplorazione si chiude con alcune zone non "
@@ -2246,7 +2280,7 @@ def close_exploration_channel(display, explorer, medic, scenario, state):
         "robot esploratore",
         "comunicare che ora userai report e risposte per la decisione finale",
         "Chiarimenti ricevuti: " + str(len(state.clarification_answers)),
-        "Ho ricevuto i chiarimenti. Ora assegno la priorita' finale.",
+        "Ho ricevuto i chiarimenti. Ora assegno la priorità finale.",
     )
     say_llm_result(display, "Medico -> Esploratore", triage_message)
 
@@ -2275,7 +2309,7 @@ def run_medical_triage(display, medic, scenario, state):
     show_llm_diagnostic(display, decision)
 
     #Mette una riga con le priorità.
-    display.line("\nPriorita':")
+    display.line("\nPriorità:")
     #Prende dalla decision la priority table
     if decision.priority_table:
         for row in decision.priority_table:
@@ -2290,10 +2324,10 @@ def run_medical_triage(display, medic, scenario, state):
     else:
         display.line("  Nessun paziente osservato nelle aree raggiunte.")
 
-    return decision
+    return decision #Di tipo TriageDecision
 
 
-#Fasi 10 e 11: viene generato il problema PDDL finale e lancio il planner operativo.
+#Fase 10: viene generato il problema PDDL finale e lancio il planner operativo.
 #Il goal contiene paziente scelto e sicurezza dell'area. Il piano finale coinvolge
 #robot medico e soccorritore civile (che è solo nel PDDL).
 def run_final_rescue_planning(display, project_dir, scenario, decision):
@@ -2357,7 +2391,7 @@ def main():
         )
         return
 
-    #Fasi 10-11: genero il problema PDDL finale e chiudo
+    #Fasi 10: genero il problema PDDL finale e chiudo
     run_final_rescue_planning(display, project_dir, scenario, decision)
 
 if __name__ == "__main__":

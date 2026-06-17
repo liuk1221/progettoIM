@@ -161,7 +161,6 @@ location non ancora esplorata.
 8. Il medico fa eventuali domande di chiarimento su quella zona.
 9. Quando tutte le zone sono state esplorate, o quando il medico chiude la ricognizione, il medico sceglie il paziente prioritario.
 10. Viene generato un problema PDDL finale con goal su paziente e sicurezza dell'area.
-11. Il planner genera il piano per robot medico e soccorritore civile.
 
 
 ## TEST
