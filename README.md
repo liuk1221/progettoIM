@@ -4,8 +4,8 @@ Simulazione di recupero sotto macerie dopo un terremoto.
 
 Ci sono tre passaggi fontamentali:
 
-- **Esplorazione guidata dal medico**: il medico sceglie una zona alla volta, manda avanti il robot esploratore e riceve report in linguaggio naturale usando Ollama (vari modelli) o Groq. C'è anche una fallback locale per ogni chiamata in caso di problemi.
-- **Spostamenti PDDL dell'esploratore**: ogni movimento tra zone viene pianificato con Fast Downward. L'esploratore puo' liberare i varchi ostruiti da macerie (`rubble`) e poi attraversarli; se il planner non trova comunque un percorso, l'esploratore lo comunica al medico. Il medico decide se chiudere l'esplorazione e passare al triage finale oppure continuare verso un'altra location.
+- **Esplorazione con selezione casuale**: una funzione random sceglie una zona alla volta tra quelle ancora disponibili; il medico manda avanti il robot esploratore e riceve report in linguaggio naturale usando Ollama (vari modelli) o Groq. C'è anche una fallback locale per ogni chiamata in caso di problemi.
+- **Spostamenti PDDL dell'esploratore**: ogni movimento tra zone viene pianificato con Fast Downward. L'esploratore puo' liberare i varchi ostruiti da macerie (`rubble`) e poi attraversarli; se il planner non trova comunque un percorso, l'esploratore lo comunica al medico. Il medico decide se chiudere l'esplorazione e passare al triage finale oppure continuare; in questo secondo caso la prossima location viene scelta casualmente.
 - **Scelta del paziente prioritario**: dopo l'esplorazione completa, o dopo una chiusura anticipata, il medico usa solo report e chiarimenti delle aree raggiunte per decidere il paziente piu' urgente. I pazienti in stanze non raggiunte non entrano nella tabella di priorita'.
 - **Piano di soccorso PDDL**: dopo la scelta, Fast Downward genera un piano operativo con robot medico e soccorritore civile.
 
@@ -16,7 +16,7 @@ che libera varchi e stabilizza aree prima dell'arrivo del medico. Anche
 l'esploratore puo' liberare varchi durante la fase di ricognizione.
 
 Il planner non decide quale paziente aiutare. Durante l'esplorazione riceve dal
-medico solo la prossima zona da raggiungere e calcola lo spostamento
+programma solo la prossima zona, scelta casualmente, e calcola lo spostamento
 dell'esploratore. Nel dominio PDDL `clear` indica un passaggio attraversabile: 
 vale per esploratore, medico e soccorritore civile.
 Dopo il triage il planner riceve la scelta del paziente e pianifica come
@@ -128,6 +128,22 @@ RESCUE_CHAR_DELAY=0.006
 RESCUE_MESSAGE_DELAY=0.55
 ```
 
+## Animazione dei piani
+
+Ogni piano PDDL di esplorazione e il piano finale di soccorso vengono animati in
+una finestra Tk con play/pausa, avanzamento manuale e slider. La finestra mostra
+celle libere bianche, celle inaccessibili nere, varchi con macerie rossi e i tre
+attori. Le posizioni raggiunte vengono mantenute tra un piano e il successivo;
+le macerie vengono invece ricaricate dalla configurazione completa dello
+scenario a ogni nuovo piano.
+
+Per usare immagini personalizzate, creare `assets/icons` e aggiungere i file
+`free_cell.png`, `blocked_cell.png`, `rubble.png`, `explorer.png`, `medic.png` e
+`civilian.png` e `patient.png`. Ogni PNG viene caricato se disponibile; in caso contrario il
+singolo elemento usa automaticamente la rappresentazione geometrica. Impostare
+`RESCUE_ANIMATION=0` per disabilitare le finestre, ad esempio durante test
+automatici.
+
 ## Planner
 
 Il solver PDDL usato dalla demo e' Fast Downward:
@@ -153,10 +169,10 @@ location non ancora esplorata.
 
 1. Caricamento dello scenario sotto macerie.
 2. Il medico comunica che guidera' l'esplorazione zona per zona.
-3. Il medico sceglie la prossima area da esplorare.
+3. Una funzione random sceglie la prossima area tra quelle ancora disponibili.
 4. Viene generato un problema PDDL per spostare l'esploratore verso quell'area.
 5. Se il planner non trova un percorso, l'esploratore lo comunica al medico.
-6. Il medico decide se terminare l'esplorazione o continuare verso un'altra location raggiungibile.
+6. Il medico decide se terminare l'esplorazione o continuare; se continua, la nuova area viene scelta casualmente tra quelle disponibili.
 7. Se il percorso esiste, l'esploratore raggiunge la zona e produce il report.
 8. Il medico fa eventuali domande di chiarimento su quella zona.
 9. Quando tutte le zone sono state esplorate, o quando il medico chiude la ricognizione, il medico sceglie il paziente prioritario.

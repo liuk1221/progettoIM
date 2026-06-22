@@ -1,5 +1,6 @@
 ﻿import json
 import os
+import random
 import sys
 import time
 from pathlib import Path
@@ -7,6 +8,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from src.llm_clients import create_llm_client
+from src.plan_animator import PlanAnimator
 from src.planner import PlannerError, run_planner
 
 
@@ -1984,23 +1986,29 @@ def medic_opens_exploration_channel(display, medic, scenario, state):
     say_llm_result(display, "Medico -> Esploratore", opening)
 
 
-#Fase 3: il medico sceglie la prossima area da esplorare.
+#Sceglie casualmente una delle aree ancora disponibili
+#La gestione dell'esplorazione non è più dell'llm medico
+def choose_random_area_direction(unexplored_areas):
+    area = random.choice(unexplored_areas)
+    return AreaDirection(
+        area.area_id,
+        "Area scelta casualmente tra quelle ancora disponibili.",
+        "random",
+        "random.choice",
+        False,
+    )
+
+
+#Fase 3: una funzione random sceglie la prossima area da esplorare.
 #Se nel giro precedente c'è stato un blocco PDDL, pending_direction può
-#contenere la nuova area già scelta dal medico per continuare l'esplorazione.
-#Altrimenti chiedo al LLM medico di scegliere tra le aree rimaste.
+#contenere la nuova area già scelta casualmente per continuare l'esplorazione.
+#Altrimenti la scelta avviene tra tutte le aree rimaste.
 def medic_selects_next_area(display, medic, scenario, state):
     if state.pending_direction is not None:
         direction = state.pending_direction
         state.pending_direction = None
     else:
-        direction = medic.choose_next_area(
-            state.reports,
-            state.unexplored_areas,
-            state.explorer_location,
-            scenario,
-            state.asked_questions,
-            state.clarification_answers,
-        )
+        direction = choose_random_area_direction(state.unexplored_areas)
 
     show_llm_diagnostic(display, direction)
     return direction
@@ -2029,8 +2037,8 @@ def print_plan(display, cost_label, plan_label, plan):
 
 
 #Fase 4: il problema PDDL viene generato per spostare l'esploratore.
-#Il medico decide la destinazione, ma il percorso fisico viene calcolato dal planner.
-def plan_explorer_route(display, project_dir, scenario, state, area):
+#La funzione random decide la destinazione, ma il percorso fisico viene calcolato dal planner.
+def plan_explorer_route(display, project_dir, scenario, state, area, animator):
     display.section("Planning esploratore: " + area.area_id)
     exploration_problem_path = generate_exploration_problem(
         scenario,
@@ -2053,6 +2061,7 @@ def plan_explorer_route(display, project_dir, scenario, state, area):
         project_dir,
     )
     print_plan(display, "percorso esploratore", "esploratore", plan)
+    animator.animate_plan(plan, "Esplorazione - " + area.area_id)
 
 
 #Fase 5: se il planner non trova un percorso, l'esploratore lo comunica al medico.
@@ -2076,9 +2085,8 @@ def explorer_reports_unreachable_area(display, explorer, area, state, error):
     say_llm_result(display, "Esploratore -> Medico", blocked_message)
 
 
-#Fase 6: il medico decide cosa fare dopo una zona irraggiungibile.
-#Può chiudere la ricognizione e passare al triage, oppure scegliere un'altra
-#area ancora disponibile. In quel caso salvo la scelta in pending_direction.
+#Fase 6: il medico decide se continuare dopo una zona irraggiungibile.
+#Se continua, la funzione random sceglie un'altra area disponibile.
 def medic_handles_unreachable_area(display, medic, scenario, state, unreachable_area):
     #Questo serve per eliminare la zona irraggiungibile da state unexp
     updated_unexplored_areas = []
@@ -2087,7 +2095,8 @@ def medic_handles_unreachable_area(display, medic, scenario, state, unreachable_
             updated_unexplored_areas.append(area)
     state.unexplored_areas = updated_unexplored_areas
 
-    #Manda il prompt per far prendere una decisione al medico su cosa fare.
+    #Il medico mantiene la decisione di continuare o terminare la ricognizione
+    #Anche se l'esplorazione ora è guidata in modo casuale.
     flow_decision = medic.decide_after_unreachable_area(
         state.reports,
         unreachable_area,
@@ -2098,22 +2107,30 @@ def medic_handles_unreachable_area(display, medic, scenario, state, unreachable_
 
     show_llm_diagnostic(display, flow_decision)
 
-    message_title = "Medico -> Esploratore (" + provider_label(flow_decision) + ")"
-    display.say(message_title, flow_decision.reason)
-
     if flow_decision.action != "continue_exploration":
+        message_title = "Medico -> Esploratore (" + provider_label(flow_decision) + ")"
+        display.say(message_title, flow_decision.reason)
         return False
 
     if not state.unexplored_areas:
+        display.say(
+            "Medico -> Esploratore (" + provider_label(flow_decision) + ")",
+            "La zona "
+            + unreachable_area.area_id
+            + " non è raggiungibile e non restano altre aree disponibili.",
+        )
         return False
 
-    state.pending_direction = AreaDirection(
-        flow_decision.next_area_id,
-        flow_decision.reason,
-        flow_decision.provider,
-        flow_decision.model,
-        flow_decision.used_fallback,
-        flow_decision.error,
+    state.pending_direction = choose_random_area_direction(state.unexplored_areas)
+    state.pending_direction.reason = (
+        "La zona "
+        + unreachable_area.area_id
+        + " non è raggiungibile. "
+        + state.pending_direction.reason
+    )
+    display.say(
+        "Medico -> Esploratore (random)",
+        state.pending_direction.reason,
     )
 
     return True
@@ -2194,9 +2211,9 @@ def mark_area_as_explored(state, area):
 #*************************************************************************************
 
 #Regola le fasi esplorative alternando i metodi sopra delle fasi 2-8.
-#Il ciclo è composto da: medico sceglie area, PDDL pianifica, esploratore riferisce,
+#Il ciclo è composto da: random sceglie area, PDDL pianifica, esploratore riferisce,
 #medico chiede chiarimenti. In caso di percorso impossibile passa dalle fasi 5-6.
-def run_guided_exploration(display, project_dir, scenario, explorer, medic):
+def run_guided_exploration(display, project_dir, scenario, explorer, medic, animator):
     display.section("Esplorazione guidata con PDDL")
     state = ExplorationState(scenario) #Classe dove 
 
@@ -2209,11 +2226,11 @@ def run_guided_exploration(display, project_dir, scenario, explorer, medic):
         medic_sends_exploration_order(display, direction, area) #Solo visual
 
         try:
-            plan_explorer_route(display, project_dir, scenario, state, area) #Explorer prova direttamente a raggiungere con il planning
+            plan_explorer_route(display, project_dir, scenario, state, area, animator) #Explorer prova direttamente a raggiungere con il planning
         except PlannerError as exc:
             #Se c'è un errore l'explorer fa il report cche area, ricevuta da medic, non è raggiungibile
             explorer_reports_unreachable_area(display, explorer, area, state, exc) #Il messaggio di risposta è generato
-            if medic_handles_unreachable_area(display, medic, scenario, state, area): #Se il medico sceglie di continuare ripeto dall'inizio del while
+            if medic_handles_unreachable_area(display, medic, scenario, state, area): #Se il medico continua, random sceglie una nuova area e ripeto il while
                                                                                       #Area viene passata come unreachable_area
                 continue
             break #Se il medico vuole smettere, esco. Esco solo quando il medico lo decide dal while, o quando ho finito le aree da esplorare
@@ -2330,7 +2347,7 @@ def run_medical_triage(display, medic, scenario, state):
 #Fase 10: viene generato il problema PDDL finale e lancio il planner operativo.
 #Il goal contiene paziente scelto e sicurezza dell'area. Il piano finale coinvolge
 #robot medico e soccorritore civile (che è solo nel PDDL).
-def run_final_rescue_planning(display, project_dir, scenario, decision):
+def run_final_rescue_planning(display, project_dir, scenario, decision, animator):
     display.section("Aggiornamento PDDL")
     display.say(
         "Sistema",
@@ -2359,6 +2376,7 @@ def run_final_rescue_planning(display, project_dir, scenario, decision):
         return
 
     print_plan(display, "stimato", "generato", plan)
+    animator.animate_plan(plan, "Soccorso finale - " + decision.selected_patient_id)
 
 
 #CORPO DELLA COMUNICAZIONE
@@ -2368,6 +2386,7 @@ def main():
     env_path = project_dir / ".env"
     env_loaded = load_dotenv(env_path)
     scenario = load_default_scenario(project_dir)
+    animator = PlanAnimator(scenario, project_dir)
     display = Display()
 
     display.section("Avvio intervento")
@@ -2378,7 +2397,7 @@ def main():
 
     #Fasi 2-8: il medico guida l'esploratore e raccoglie report e chiarimenti.
     #Apertura canale di esplorazione
-    state = run_guided_exploration(display, project_dir, scenario, explorer, medic)
+    state = run_guided_exploration(display, project_dir, scenario, explorer, medic, animator)
 
     #Fase 9: chiudo canale di esplorazione e faccio
     close_exploration_channel(display, explorer, medic, scenario, state)
@@ -2392,7 +2411,7 @@ def main():
         return
 
     #Fasi 10: genero il problema PDDL finale e chiudo
-    run_final_rescue_planning(display, project_dir, scenario, decision)
+    run_final_rescue_planning(display, project_dir, scenario, decision, animator)
 
 if __name__ == "__main__":
     main()
